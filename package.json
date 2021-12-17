@@ -10,15 +10,18 @@
   "author": "Andrew Lawendy",
   "license": "MIT",
   "dependencies": {
+    "firebase": "^9.6.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-firebase-hooks": "^4.0.1",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.0.0-0",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
+    "@babel/preset-typescript": "^7.16.5",
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
     "@types/react": "^17.0.0",
