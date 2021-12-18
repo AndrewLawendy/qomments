@@ -6,6 +6,7 @@
     "plugin:jsx-a11y/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:react/jsx-runtime",
     "prettier",
     "prettier/react",
     "prettier/@typescript-eslint"
@@ -71,7 +72,8 @@
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    }
+    },
+    "jsxPragma": null
   },
   "env": {
     "es6": true,
