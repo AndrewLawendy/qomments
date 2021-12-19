@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useDecoratorsCollection } from "~resources/useDecoratorsCollection";
-import { useBlocksCollection } from "~resources/useBlocksCollection";
+import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
+import { useBlocksCollection } from "~/resources/useBlocksCollection";
 
 const MySpace = () => {
   const [decoratorsRef] = useDecoratorsCollection();

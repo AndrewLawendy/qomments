@@ -10,10 +10,10 @@ import {
   Dimmer,
   Loader,
 } from "semantic-ui-react";
-import LoginImage from "~assets/images/login.jpg";
+import LoginImage from "~/assets/images/login.jpg";
 
-import useAuth from "~hooks/useAuth";
-import { auth } from "~utils/firebase";
+import useAuth from "~/hooks/useAuth";
+import { auth } from "~/utils/firebase";
 
 const googleAuthProvider = new GoogleAuthProvider();
 

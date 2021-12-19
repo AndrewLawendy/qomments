@@ -1,7 +1,7 @@
 import { useEffect, FC } from "react";
 import { useLocation } from "wouter";
 
-import useAuth from "~hooks/useAuth";
+import useAuth from "~/hooks/useAuth";
 
 const AuthWrapper: FC = ({ children }) => {
   const [, setLocation] = useLocation();

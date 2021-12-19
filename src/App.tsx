@@ -2,9 +2,9 @@ import ReactDOM from "react-dom";
 import { Route } from "wouter";
 import "semantic-ui-css/semantic.min.css";
 
-import AuthWrapper from "~components/AuthWrapper";
-import Login from "~pages/Login";
-import Main from "~pages";
+import AuthWrapper from "~/components/AuthWrapper";
+import Login from "~/pages/Login";
+import Main from "~/pages";
 
 const App = () => {
   return (

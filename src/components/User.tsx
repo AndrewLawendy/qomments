@@ -2,8 +2,8 @@ import { signOut } from "firebase/auth";
 import { css } from "@emotion/css";
 import { Dropdown, Image, Header } from "semantic-ui-react";
 
-import useAuth from "~hooks/useAuth";
-import { auth } from "~utils/firebase";
+import useAuth from "~/hooks/useAuth";
+import { auth } from "~/utils/firebase";
 
 const User = () => {
   const [user] = useAuth();

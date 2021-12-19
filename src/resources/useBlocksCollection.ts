@@ -1,8 +1,8 @@
 import { collection, query, where } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 
-import useAuth from "~hooks/useAuth";
-import { db } from "~utils/firebase";
+import useAuth from "~/hooks/useAuth";
+import { db } from "~/utils/firebase";
 
 const useBlocksCollection = () => {
   const [user] = useAuth();

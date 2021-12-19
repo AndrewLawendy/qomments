@@ -1,7 +1,7 @@
-import { Route, Redirect } from "wouter";
+import { Route } from "wouter";
 
-import Header from "~components/Header";
-import Generator from "~pages/Generator";
+import Header from "~/components/Header";
+import Generator from "~/pages/Generator";
 import MySpace from "./MySpace";
 
 const Main = () => {
