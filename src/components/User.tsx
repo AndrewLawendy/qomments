@@ -10,19 +10,19 @@ const User = () => {
 
   return (
     <Dropdown
-      as={({ children, ...props }) => {
-        return (
-          <div {...props} title={user?.displayName}>
-            <Image src={user?.photoURL} avatar alt="User Photo" />
-
-            {children}
-          </div>
-        );
-      }}
-      pointing="top right"
+      floating
+      trigger={
+        <Image
+          src={user?.photoURL}
+          title={user?.displayName}
+          alt="User Photo"
+          avatar
+        />
+      }
+      direction="left"
     >
       <Dropdown.Menu>
-        <Dropdown.Item>
+        <Dropdown.Header>
           <div
             className={css`
               text-align: center;
@@ -30,8 +30,8 @@ const User = () => {
           >
             <Image
               src={user?.photoURL}
-              avatar
               alt={user?.displayName}
+              avatar
               size="tiny"
             />
             <Header
@@ -43,9 +43,16 @@ const User = () => {
             >
               {user?.displayName}
             </Header>
-            <p>{user?.email}</p>
+            <Header
+              size="tiny"
+              className={css`
+                margin-top: 0 !important;
+              `}
+            >
+              {user?.email}
+            </Header>
           </div>
-        </Dropdown.Item>
+        </Dropdown.Header>
         <Dropdown.Divider />
         <Dropdown.Item
           className={css`
