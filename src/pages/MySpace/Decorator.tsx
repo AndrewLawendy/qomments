@@ -32,9 +32,11 @@ const Decorator = ({
   value,
 }: DecoratorsProps): JSX.Element => {
   const [body, setBody] = useState<string>("");
-  const addDocument = useAddDocument("decorators");
-  const updateDocument = useUpdateDocument("decorators");
-  const deleteDocument = useDeleteDocument("decorators");
+  const [addDocument, isAddDocumentLoading] = useAddDocument("decorators");
+  const [updateDocument, isUpdateDocumentLoading] =
+    useUpdateDocument("decorators");
+  const [deleteDocument, isDeleteDocumentLoading] =
+    useDeleteDocument("decorators");
 
   useEffect(() => {
     setBody(value?.body || "");
@@ -71,11 +73,13 @@ const Decorator = ({
                         body,
                       })
                     }
+                    disabled={isUpdateDocumentLoading}
                   />
                 ) : (
                   <Button
                     icon="plus"
                     onClick={() => addDocument({ body, type })}
+                    disabled={isAddDocumentLoading}
                   />
                 )
               }
@@ -85,7 +89,11 @@ const Decorator = ({
             <Popup
               content={`Delete ${type}`}
               trigger={
-                <Button icon="trash" onClick={() => deleteDocument(value.id)} />
+                <Button
+                  icon="trash"
+                  onClick={() => deleteDocument(value.id)}
+                  disabled={isDeleteDocumentLoading}
+                />
               }
             />
           )}
