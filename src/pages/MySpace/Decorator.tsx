@@ -67,6 +67,8 @@ const Decorator = ({
               trigger={
                 value?.id ? (
                   <Button
+                    circular
+                    color="blue"
                     icon="sync"
                     onClick={() =>
                       updateDocument(value?.id || "", {
@@ -77,6 +79,8 @@ const Decorator = ({
                   />
                 ) : (
                   <Button
+                    circular
+                    color="green"
                     icon="plus"
                     onClick={() => addDocument({ body, type })}
                     disabled={isAddDocumentLoading}
@@ -90,6 +94,8 @@ const Decorator = ({
               content={`Delete ${type}`}
               trigger={
                 <Button
+                  circular
+                  color="red"
                   icon="trash"
                   onClick={() => deleteDocument(value.id)}
                   disabled={isDeleteDocumentLoading}
