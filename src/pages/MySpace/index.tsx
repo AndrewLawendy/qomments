@@ -1,26 +1,55 @@
 import { useState, useEffect } from "react";
+import { Container, Header } from "semantic-ui-react";
+import { css } from "@emotion/css";
+
 import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
 import { useBlocksCollection } from "~/resources/useBlocksCollection";
 
+import useAuth from "~hooks/useAuth";
+
+import Decorator from "./Decorator";
+
 const MySpace = () => {
-  const [decoratorsRef] = useDecoratorsCollection();
+  const [user] = useAuth();
+  const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection();
   const [decorators, setDecorators] = useState([]);
-  const [closingDecorator, introcutionDecorator] = decorators;
+  const introductionDecorator = decorators.find(
+    ({ type }) => type === "Introduction"
+  );
+  const closingDecorator = decorators.find(({ type }) => type === "Closing");
   const [blocksRef] = useBlocksCollection();
 
   useEffect(() => {
     const decoratorsValues = [];
     decoratorsRef?.forEach((document) => {
-      decoratorsValues.push(document.data());
+      decoratorsValues.push({ id: document.id, ...document.data() });
     });
-    const decoratorsSorted = decoratorsValues.sort(
-      ({ type: typeA }, { type: typeB }) => typeA.localeCompare(typeB)
-    );
 
-    setDecorators(decoratorsSorted);
+    setDecorators(decoratorsValues);
   }, [decoratorsRef]);
 
-  return <>My Space</>;
+  return (
+    <Container
+      text
+      className={css`
+        padding-top: 50px;
+        padding-bottom: 50px;
+      `}
+    >
+      <Header as="h2">Welcome {user?.displayName}</Header>
+
+      <Decorator
+        type="Introduction"
+        isLoading={isDecoratorsLoading}
+        value={introductionDecorator}
+      />
+      <Decorator
+        type="Closing"
+        isLoading={isDecoratorsLoading}
+        value={closingDecorator}
+      />
+    </Container>
+  );
 };
 
 export default MySpace;
