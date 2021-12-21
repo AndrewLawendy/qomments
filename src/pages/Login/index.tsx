@@ -1,6 +1,11 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
-import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithRedirect,
+  signInWithPopup,
+} from "firebase/auth";
 import { css } from "@emotion/css";
 import {
   Grid,
@@ -20,6 +25,7 @@ import useAuth from "~/hooks/useAuth";
 import { auth } from "~/utils/firebase";
 
 const googleAuthProvider = new GoogleAuthProvider();
+const facebookAuthProvider = new FacebookAuthProvider();
 
 const Login = () => {
   const [, setLocation] = useLocation();
@@ -129,6 +135,7 @@ const Login = () => {
                   margin-bottom: 1rem !important;
                 `}
                 disabled={isLoading}
+                onClick={() => signInWithPopup(auth, facebookAuthProvider)}
               >
                 <Icon name="facebook" /> Sign in with Facebook
               </Button>
