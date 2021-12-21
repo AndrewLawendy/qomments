@@ -13,23 +13,24 @@ import {
   Loader,
 } from "semantic-ui-react";
 import LoginImage from "~/assets/images/login.jpg";
+import Logo from "~/assets/logo.png";
 
+import { useAuthContext } from "~contexts/AuthContext";
 import useAuth from "~/hooks/useAuth";
 import { auth } from "~/utils/firebase";
-import { hasLocalAuth } from "~utils";
 
 const googleAuthProvider = new GoogleAuthProvider();
 
 const Login = () => {
   const [, setLocation] = useLocation();
-  const isUserLoggedIn = hasLocalAuth();
-  const [user, isLoading] = useAuth();
+  const { authData } = useAuthContext();
+  const [, isLoading] = useAuth();
 
   useEffect(() => {
-    if (isUserLoggedIn || user) {
+    if (authData) {
       setLocation("/");
     }
-  }, [user]);
+  }, [authData]);
 
   return (
     <Grid
@@ -44,7 +45,17 @@ const Login = () => {
           padding: 0 !important;
         `}
       >
-        <Grid.Column mobile={16} tablet={8} computer={8}>
+        <Grid.Column
+          mobile={16}
+          tablet={8}
+          computer={8}
+          className={css`
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 25px;
+          `}
+        >
           <Image
             centered
             src={LoginImage}
@@ -54,6 +65,16 @@ const Login = () => {
               object-fit: cover;
             `}
           />
+          <div>
+            Icons made by{" "}
+            <a href="https://www.freepik.com" title="Freepik">
+              Freepik
+            </a>{" "}
+            from{" "}
+            <a href="https://www.flaticon.com/" title="Flaticon">
+              www.flaticon.com
+            </a>
+          </div>
         </Grid.Column>
         <Grid.Column mobile={16} tablet={8} computer={8}>
           <Container
@@ -77,7 +98,17 @@ const Login = () => {
                   <Loader inverted>Loading</Loader>
                 </Dimmer>
               )}
-              <Header size="medium">Welcome to qomments!</Header>
+
+              <img src={Logo} />
+              <Header
+                size="medium"
+                className={css`
+                  margin-top: 16px !important;
+                  margin-bottom: 48px !important;
+                `}
+              >
+                Welcome to qomments!
+              </Header>
               <Header size="huge">Sign In</Header>
 
               <Button

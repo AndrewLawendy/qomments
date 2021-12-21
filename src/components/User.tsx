@@ -2,19 +2,21 @@ import { signOut } from "firebase/auth";
 import { css } from "@emotion/css";
 import { Dropdown, Image, Header } from "semantic-ui-react";
 
-import useAuth from "~/hooks/useAuth";
+import { useAuthContext } from "~contexts/AuthContext";
 import { auth } from "~/utils/firebase";
 
 const User = () => {
-  const [user] = useAuth();
+  const { authData } = useAuthContext();
+
+  if (authData === null) return null;
 
   return (
     <Dropdown
       floating
       trigger={
         <Image
-          src={user?.photoURL}
-          title={user?.displayName}
+          src={authData.photoURL}
+          title={authData.displayName}
           alt="User Photo"
           avatar
         />
@@ -29,8 +31,8 @@ const User = () => {
             `}
           >
             <Image
-              src={user?.photoURL}
-              alt={user?.displayName}
+              src={authData.photoURL}
+              alt={authData.displayName}
               avatar
               size="tiny"
             />
@@ -41,7 +43,7 @@ const User = () => {
                 margin-bottom: 0.3rem !important;
               `}
             >
-              {user?.displayName}
+              {authData.displayName}
             </Header>
             <Header
               size="tiny"
@@ -49,7 +51,7 @@ const User = () => {
                 margin-top: 0 !important;
               `}
             >
-              {user?.email}
+              {authData.email}
             </Header>
           </div>
         </Dropdown.Header>

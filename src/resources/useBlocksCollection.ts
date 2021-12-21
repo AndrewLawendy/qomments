@@ -1,12 +1,12 @@
 import { collection, query, where } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 
-import useAuth from "~/hooks/useAuth";
+import { useAuthContext } from "~contexts/AuthContext";
 import { db } from "~/utils/firebase";
 
 const useBlocksCollection = () => {
-  const [user] = useAuth();
-  const q = query(collection(db, "blocks"), where("uid", "==", user.uid));
+  const { authData } = useAuthContext();
+  const q = query(collection(db, "blocks"), where("uid", "==", authData?.uid));
   return useCollection(q, {
     snapshotListenOptions: { includeMetadataChanges: true },
   });

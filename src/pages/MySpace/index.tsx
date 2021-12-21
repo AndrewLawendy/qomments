@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 import { Container, Header } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
+import { useAuthContext } from "~contexts/AuthContext";
+
 import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
 import { useBlocksCollection } from "~/resources/useBlocksCollection";
-
-import useAuth from "~hooks/useAuth";
 
 import Decorator from "./Decorator";
 
 const MySpace = () => {
-  const [user] = useAuth();
+  const { authData } = useAuthContext();
   const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection();
   const [decorators, setDecorators] = useState([]);
   const introductionDecorator = decorators.find(
@@ -28,6 +28,8 @@ const MySpace = () => {
     setDecorators(decoratorsValues);
   }, [decoratorsRef]);
 
+  if (authData === null) return null;
+
   return (
     <Container
       text
@@ -36,7 +38,7 @@ const MySpace = () => {
         padding-bottom: 50px;
       `}
     >
-      <Header as="h2">Welcome {user?.displayName}</Header>
+      <Header as="h2">Welcome {authData.displayName}</Header>
 
       <Decorator
         type="Introduction"

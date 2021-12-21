@@ -8,14 +8,14 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
-import useAuth from "~hooks/useAuth";
+import { useAuthContext } from "~contexts/AuthContext";
 import { db } from "../utils/firebase";
 
 export const useAddDocument = (
   collectionName: string
 ): [(data: any) => void, boolean] => {
   const [isLoading, setLoading] = useState(false);
-  const [user] = useAuth();
+  const { authData } = useAuthContext();
 
   const addDocument = (data: any) => {
     setLoading(true);
@@ -23,7 +23,7 @@ export const useAddDocument = (
       ...data,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
-      uid: user?.uid,
+      uid: authData?.uid,
     }).finally(() => setLoading(false));
   };
 
