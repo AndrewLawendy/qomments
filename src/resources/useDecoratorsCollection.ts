@@ -8,7 +8,7 @@ const useDecoratorsCollection = () => {
   const { authData } = useAuthContext();
   const q = query(
     collection(db, "decorators"),
-    where("uid", "==", authData?.uid)
+    where("user", "==", authData?.uid)
   );
   return useCollection(q, {
     snapshotListenOptions: { includeMetadataChanges: true },

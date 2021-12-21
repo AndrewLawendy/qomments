@@ -23,7 +23,7 @@ export const useAddDocument = (
       ...data,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
-      uid: authData?.uid,
+      user: authData?.uid,
     }).finally(() => setLoading(false));
   };
 

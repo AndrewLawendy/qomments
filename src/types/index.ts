@@ -6,5 +6,5 @@ export type Decorator = {
   body: "string";
   createdAt: Timestamp;
   updatedAt: Timestamp;
-  uid: string;
+  user: string;
 };
