@@ -1,22 +1,15 @@
-import { useEffect, FC } from "react";
-import { useLocation } from "wouter";
+import { FC } from "react";
+import { Redirect } from "wouter";
 
 import useAuth from "~/hooks/useAuth";
+import { hasLocalAuth } from "~utils";
 
 const AuthWrapper: FC = ({ children }) => {
-  const [, setLocation] = useLocation();
+  const isUserLoggedIn = hasLocalAuth();
   const [user] = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      setLocation("/");
-    } else {
-      setLocation("/login");
-    }
-  }, [user]);
-
-  if (user) return <>{children}</>;
-  return null;
+  if (isUserLoggedIn || user) return <>{children}</>;
+  return <Redirect to="/login" />;
 };
 
 export default AuthWrapper;

@@ -128,7 +128,7 @@ const Decorator = ({
 
       {isLoading && (
         <Dimmer active inverted>
-          <Loader inverted>Loading</Loader>
+          <Loader inverted>Loading {type} data</Loader>
         </Dimmer>
       )}
     </Segment>

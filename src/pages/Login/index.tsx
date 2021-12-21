@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useLocation } from "wouter";
 import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
 import { css } from "@emotion/css";
 import {
@@ -14,11 +16,21 @@ import LoginImage from "~/assets/images/login.jpg";
 
 import useAuth from "~/hooks/useAuth";
 import { auth } from "~/utils/firebase";
+import { hasLocalAuth } from "~utils";
 
 const googleAuthProvider = new GoogleAuthProvider();
 
 const Login = () => {
-  const [, isLoading] = useAuth();
+  const [, setLocation] = useLocation();
+  const isUserLoggedIn = hasLocalAuth();
+  const [user, isLoading] = useAuth();
+
+  useEffect(() => {
+    if (isUserLoggedIn || user) {
+      setLocation("/");
+    }
+  }, [user]);
+
   return (
     <Grid
       className={css`
