@@ -39,8 +39,6 @@ const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
     setBody(value?.body || "");
   }, [value?.body]);
 
-  if (!value?.id) return null;
-
   return (
     <Segment>
       <div
@@ -62,9 +60,9 @@ const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
         <div>
           {!isLoading && (
             <Popup
-              content={value.id ? `Update ${title}` : `Add ${title}`}
+              content={value?.id ? `Update ${title}` : `Add ${title}`}
               trigger={
-                value.id ? (
+                value?.id ? (
                   <Button
                     circular
                     color="blue"
@@ -93,7 +91,7 @@ const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
               }
             />
           )}
-          {value.id && (
+          {value?.id && (
             <Popup
               content={`Delete ${title}`}
               trigger={
@@ -119,7 +117,7 @@ const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
           onChange={(e) => setBody(e.target.value)}
         />
       </Form>
-      {value.updatedAt && (
+      {value?.updatedAt && (
         <p
           className={css`
             margin-top: 1rem;

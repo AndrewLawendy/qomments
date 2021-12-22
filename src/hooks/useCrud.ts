@@ -6,6 +6,8 @@ import {
   deleteDoc,
   collection,
   serverTimestamp,
+  DocumentReference,
+  DocumentData,
 } from "firebase/firestore";
 
 import { useAuthContext } from "~contexts/AuthContext";
@@ -14,13 +16,16 @@ import { Common } from "~types";
 
 export const useAddDocument = <T>(
   collectionName: string
-): [(data: Omit<T, keyof Common>) => void, boolean] => {
+): [
+  (data: Omit<T, keyof Common>) => Promise<DocumentReference<DocumentData>>,
+  boolean
+] => {
   const [isLoading, setLoading] = useState(false);
   const { authData } = useAuthContext();
 
   const addDocument = (data: Omit<T, keyof Common>) => {
     setLoading(true);
-    addDoc(collection(db, collectionName), {
+    return addDoc(collection(db, collectionName), {
       ...data,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
