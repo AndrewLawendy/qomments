@@ -3,9 +3,8 @@ import { Container, Header, Button, Loader } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
 import { useAuthContext } from "~contexts/AuthContext";
-import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
 import { useTopicsCollection } from "~/resources/useTopicsCollection";
-import { Topic, Decorator as DecoratorType } from "~types";
+import { Topic } from "~types";
 
 import Decorator from "./Decorator";
 import AddTopic from "./AddTopic";
@@ -13,27 +12,11 @@ import AddTopic from "./AddTopic";
 const MySpace = () => {
   const { authData } = useAuthContext();
   const [activeBlock, setActiveBlock] = useState("Introduction");
-  const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection();
-  const [decorators, setDecorators] = useState<DecoratorType[]>([]);
-  const introductionDecorator = decorators.find(
-    ({ type }) => type === "introduction"
-  );
-  const closingDecorator = decorators.find(({ type }) => type === "closing");
-
+  const [mountBlocks, setMountBlocks] = useState<{ [key: string]: boolean }>({
+    Introduction: true,
+  });
   const [topicsRef, isTopicsLoading] = useTopicsCollection();
   const [topics, setTopics] = useState<Topic[]>([]);
-
-  useEffect(() => {
-    const decoratorsValues: DecoratorType[] = [];
-    decoratorsRef?.forEach((document) =>
-      decoratorsValues.push({
-        id: document.id,
-        ...document.data(),
-      } as DecoratorType)
-    );
-
-    setDecorators(decoratorsValues);
-  }, [decoratorsRef]);
 
   useEffect(() => {
     const topicsValues: Topic[] = [];
@@ -77,7 +60,10 @@ const MySpace = () => {
             icon="bookmark"
             labelPosition="left"
             color={activeBlock === "Introduction" ? "orange" : "yellow"}
-            onClick={() => setActiveBlock("Introduction")}
+            onClick={() => {
+              setActiveBlock("Introduction");
+              setMountBlocks({ ...mountBlocks, Introduction: true });
+            }}
           />
           <Button
             fluid
@@ -85,7 +71,10 @@ const MySpace = () => {
             icon="bookmark"
             labelPosition="left"
             color={activeBlock === "Closing" ? "orange" : "yellow"}
-            onClick={() => setActiveBlock("Closing")}
+            onClick={() => {
+              setActiveBlock("Closing");
+              setMountBlocks({ ...mountBlocks, Closing: true });
+            }}
           />
         </div>
 
@@ -129,7 +118,10 @@ const MySpace = () => {
               icon="bookmark"
               labelPosition="left"
               color={activeBlock === topic.id ? "orange" : "yellow"}
-              onClick={() => setActiveBlock(topic.id)}
+              onClick={() => {
+                setActiveBlock(topic.id);
+                setMountBlocks({ ...mountBlocks, [topic.id]: true });
+              }}
             />
           ))}
         </div>
@@ -145,29 +137,25 @@ const MySpace = () => {
             padding-bottom: 48px;
           `}
         >
-          <div
-            className={css`
-              display: ${activeBlock === "Introduction" ? "block" : "none"};
-            `}
-          >
-            <Decorator
-              title="Introduction"
-              isLoading={isDecoratorsLoading}
-              value={introductionDecorator}
-            />
-          </div>
+          {mountBlocks.Introduction && (
+            <div
+              className={css`
+                display: ${activeBlock === "Introduction" ? "block" : "none"};
+              `}
+            >
+              <Decorator title="Introduction" type="introduction" />
+            </div>
+          )}
 
-          <div
-            className={css`
-              display: ${activeBlock === "Closing" ? "block" : "none"};
-            `}
-          >
-            <Decorator
-              title="Closing"
-              isLoading={isDecoratorsLoading}
-              value={closingDecorator}
-            />
-          </div>
+          {mountBlocks.Closing && (
+            <div
+              className={css`
+                display: ${activeBlock === "Closing" ? "block" : "none"};
+              `}
+            >
+              <Decorator title="Closing" type="closing" />
+            </div>
+          )}
         </Container>
       </article>
     </>

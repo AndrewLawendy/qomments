@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { css } from "@emotion/css";
+import { where } from "firebase/firestore";
 import {
   Segment,
   Header,
@@ -19,15 +20,20 @@ import {
   useUpdateDocument,
   useDeleteDocument,
 } from "~/hooks/useCrud";
+import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
 
 type DecoratorsProps = {
   title: "Introduction" | "Closing";
-  isLoading: boolean;
-  value?: Decorator;
+  type: "introduction" | "closing";
 };
 
-const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
+const Decorator = ({ title, type }: DecoratorsProps) => {
   const [body, setBody] = useState<string>("");
+  const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection(
+    where("type", "==", type)
+  );
+  const [decorator, setDecorator] = useState<Decorator | null>();
+
   const [addDocument, isAddDocumentLoading] =
     useAddDocument<Decorator>("decorators");
   const [updateDocument, isUpdateDocumentLoading] =
@@ -36,8 +42,18 @@ const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
     useDeleteDocument("decorators");
 
   useEffect(() => {
-    setBody(value?.body || "");
-  }, [value?.body]);
+    const decoratorsValues: Decorator[] = [];
+    decoratorsRef?.forEach((document) =>
+      decoratorsValues.push({
+        id: document.id,
+        ...document.data(),
+      } as Decorator)
+    );
+
+    const [decorator] = decoratorsValues;
+    setDecorator(decorator);
+    setBody(decorator?.body || "");
+  }, [decoratorsRef]);
 
   return (
     <Segment>
@@ -58,17 +74,17 @@ const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
           {title}
         </Header>
         <div>
-          {!isLoading && (
+          {!isDecoratorsLoading && (
             <Popup
-              content={value?.id ? `Update ${title}` : `Add ${title}`}
+              content={decorator?.id ? `Update ${title}` : `Add ${title}`}
               trigger={
-                value?.id ? (
+                decorator?.id ? (
                   <Button
                     circular
                     color="blue"
                     icon="sync"
                     onClick={() =>
-                      updateDocument(value.id, {
+                      updateDocument(decorator.id, {
                         body,
                       })
                     }
@@ -82,7 +98,7 @@ const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
                     onClick={() =>
                       addDocument({
                         body,
-                        type: title.toUpperCase() as "introduction" | "closing",
+                        type,
                       })
                     }
                     disabled={isAddDocumentLoading}
@@ -91,7 +107,7 @@ const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
               }
             />
           )}
-          {value?.id && (
+          {decorator?.id && (
             <Popup
               content={`Delete ${title}`}
               trigger={
@@ -99,7 +115,7 @@ const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
                   circular
                   color="red"
                   icon="trash"
-                  onClick={() => deleteDocument(value.id)}
+                  onClick={() => deleteDocument(decorator.id)}
                   disabled={isDeleteDocumentLoading}
                 />
               }
@@ -117,18 +133,18 @@ const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
           onChange={(e) => setBody(e.target.value)}
         />
       </Form>
-      {value?.updatedAt && (
+      {decorator?.updatedAt && (
         <p
           className={css`
             margin-top: 1rem;
           `}
         >
           <Icon name="calendar alternate outline" /> Last updated:{" "}
-          {value.updatedAt.toDate().toLocaleString()}
+          {decorator.updatedAt.toDate().toLocaleString()}
         </p>
       )}
 
-      {isLoading && (
+      {isDecoratorsLoading && (
         <Dimmer active inverted>
           <Loader inverted>Loading {title} data</Loader>
         </Dimmer>

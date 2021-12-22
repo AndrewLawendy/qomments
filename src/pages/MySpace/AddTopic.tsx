@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import { css } from "@emotion/css";
 import { Icon, Modal, Button, Form, Input } from "semantic-ui-react";
 
@@ -68,8 +68,8 @@ const AddTopic = () => {
                   pointing: "above",
                 }
               }
-              onChange={(e: FormEvent<HTMLInputElement>) => {
-                setTopic(e.currentTarget.value);
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setTopic(e.target.value);
               }}
               onBlur={() => setTouched(true)}
               autoFocus
