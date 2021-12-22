@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Container, Header, Button } from "semantic-ui-react";
+import { Container, Header, Button, Loader } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
 import { useAuthContext } from "~contexts/AuthContext";
-
 import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
 import { useTopicsCollection } from "~/resources/useTopicsCollection";
+import { Topic, Decorator as DecoratorType } from "~types";
 
 import Decorator from "./Decorator";
 import AddTopic from "./AddTopic";
@@ -14,34 +14,34 @@ const MySpace = () => {
   const { authData } = useAuthContext();
   const [activeBlock, setActiveBlock] = useState("Introduction");
   const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection();
-  const [decorators, setDecorators] = useState([]);
+  const [decorators, setDecorators] = useState<DecoratorType[]>([]);
   const introductionDecorator = decorators.find(
-    ({ type }) => type === "Introduction"
+    ({ type }) => type === "introduction"
   );
-  const closingDecorator = decorators.find(({ type }) => type === "Closing");
+  const closingDecorator = decorators.find(({ type }) => type === "closing");
 
-  const [topicsRef] = useTopicsCollection();
-  const [topics, setTopics] = useState([]);
+  const [topicsRef, isTopicsLoading] = useTopicsCollection();
+  const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
-    const decoratorsValues = [];
+    const decoratorsValues: DecoratorType[] = [];
     decoratorsRef?.forEach((document) =>
       decoratorsValues.push({
         id: document.id,
         ...document.data(),
-      })
+      } as DecoratorType)
     );
 
     setDecorators(decoratorsValues);
   }, [decoratorsRef]);
 
   useEffect(() => {
-    const topicsValues = [];
+    const topicsValues: Topic[] = [];
     topicsRef?.forEach((topic) =>
       topicsValues.push({
         id: topic.id,
         ...topic.data(),
-      })
+      } as Topic)
     );
 
     setTopics(topicsValues);
@@ -108,6 +108,12 @@ const MySpace = () => {
           </Header>
           <AddTopic />
         </div>
+
+        {isTopicsLoading && (
+          <Loader active inline="centered">
+            Loading Topics
+          </Loader>
+        )}
         <div
           className={css`
             button:nth-of-type(1n + 2) {
@@ -145,7 +151,7 @@ const MySpace = () => {
             `}
           >
             <Decorator
-              type="Introduction"
+              title="Introduction"
               isLoading={isDecoratorsLoading}
               value={introductionDecorator}
             />
@@ -157,7 +163,7 @@ const MySpace = () => {
             `}
           >
             <Decorator
-              type="Closing"
+              title="Closing"
               isLoading={isDecoratorsLoading}
               value={closingDecorator}
             />

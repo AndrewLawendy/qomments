@@ -10,14 +10,15 @@ import {
 
 import { useAuthContext } from "~contexts/AuthContext";
 import { db } from "../utils/firebase";
+import { Common } from "~types";
 
-export const useAddDocument = (
+export const useAddDocument = <T>(
   collectionName: string
-): [(data: any) => void, boolean] => {
+): [(data: Omit<T, keyof Common>) => void, boolean] => {
   const [isLoading, setLoading] = useState(false);
   const { authData } = useAuthContext();
 
-  const addDocument = (data: any) => {
+  const addDocument = (data: Omit<T, keyof Common>) => {
     setLoading(true);
     addDoc(collection(db, collectionName), {
       ...data,
@@ -30,11 +31,14 @@ export const useAddDocument = (
   return [addDocument, isLoading];
 };
 
-export const useUpdateDocument = (
+export const useUpdateDocument = <T>(
   collectionName: string
-): [(documentId: string, data: any) => Promise<void>, boolean] => {
+): [
+  (documentId: string, data: Omit<T, keyof Common>) => Promise<void>,
+  boolean
+] => {
   const [isLoading, setLoading] = useState(false);
-  const updateDocument = (documentId: string, data: any) => {
+  const updateDocument = (documentId: string, data: Omit<T, keyof Common>) => {
     setLoading(true);
     const documentRef = doc(db, collectionName, documentId);
 

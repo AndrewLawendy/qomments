@@ -21,26 +21,25 @@ import {
 } from "~/hooks/useCrud";
 
 type DecoratorsProps = {
-  type: "Introduction" | "Closing";
+  title: "Introduction" | "Closing";
   isLoading: boolean;
   value?: Decorator;
 };
 
-const Decorator = ({
-  type,
-  isLoading,
-  value,
-}: DecoratorsProps): JSX.Element => {
+const Decorator = ({ title, isLoading, value }: DecoratorsProps) => {
   const [body, setBody] = useState<string>("");
-  const [addDocument, isAddDocumentLoading] = useAddDocument("decorators");
+  const [addDocument, isAddDocumentLoading] =
+    useAddDocument<Decorator>("decorators");
   const [updateDocument, isUpdateDocumentLoading] =
-    useUpdateDocument("decorators");
+    useUpdateDocument<Omit<Decorator, "type">>("decorators");
   const [deleteDocument, isDeleteDocumentLoading] =
     useDeleteDocument("decorators");
 
   useEffect(() => {
     setBody(value?.body || "");
   }, [value?.body]);
+
+  if (!value?.id) return null;
 
   return (
     <Segment>
@@ -58,20 +57,20 @@ const Decorator = ({
             margin: 0 !important;
           `}
         >
-          {type}
+          {title}
         </Header>
         <div>
           {!isLoading && (
             <Popup
-              content={value?.id ? `Update ${type}` : `Add ${type}`}
+              content={value.id ? `Update ${title}` : `Add ${title}`}
               trigger={
-                value?.id ? (
+                value.id ? (
                   <Button
                     circular
                     color="blue"
                     icon="sync"
                     onClick={() =>
-                      updateDocument(value?.id || "", {
+                      updateDocument(value.id, {
                         body,
                       })
                     }
@@ -82,16 +81,21 @@ const Decorator = ({
                     circular
                     color="green"
                     icon="plus"
-                    onClick={() => addDocument({ body, type })}
+                    onClick={() =>
+                      addDocument({
+                        body,
+                        type: title.toUpperCase() as "introduction" | "closing",
+                      })
+                    }
                     disabled={isAddDocumentLoading}
                   />
                 )
               }
             />
           )}
-          {value?.id && (
+          {value.id && (
             <Popup
-              content={`Delete ${type}`}
+              content={`Delete ${title}`}
               trigger={
                 <Button
                   circular
@@ -111,11 +115,11 @@ const Decorator = ({
           className={css`
             resize: none !important;
           `}
-          placeholder={`Fill ${type}...`}
+          placeholder={`Fill ${title}...`}
           onChange={(e) => setBody(e.target.value)}
         />
       </Form>
-      {value?.updatedAt && (
+      {value.updatedAt && (
         <p
           className={css`
             margin-top: 1rem;
@@ -128,7 +132,7 @@ const Decorator = ({
 
       {isLoading && (
         <Dimmer active inverted>
-          <Loader inverted>Loading {type} data</Loader>
+          <Loader inverted>Loading {title} data</Loader>
         </Dimmer>
       )}
     </Segment>
