@@ -4,9 +4,10 @@ import { css } from "@emotion/css";
 
 import { useAuthContext } from "~contexts/AuthContext";
 import { useTopicsCollection } from "~/resources/useTopicsCollection";
-import { Topic } from "~types";
+import { Topic as TopicType } from "~types";
 
 import Decorator from "./Decorator";
+import Topic from "./Topic";
 import AddTopic from "./AddTopic";
 
 const MySpace = () => {
@@ -16,15 +17,15 @@ const MySpace = () => {
     Introduction: true,
   });
   const [topicsRef, isTopicsLoading] = useTopicsCollection();
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const [topics, setTopics] = useState<TopicType[]>([]);
 
   useEffect(() => {
-    const topicsValues: Topic[] = [];
+    const topicsValues: TopicType[] = [];
     topicsRef?.forEach((topic) =>
       topicsValues.push({
         id: topic.id,
         ...topic.data(),
-      } as Topic)
+      } as TopicType)
     );
 
     setTopics(topicsValues);
@@ -156,6 +157,19 @@ const MySpace = () => {
               <Decorator title="Closing" type="closing" />
             </div>
           )}
+          {topics.map((topic) => {
+            if (mountBlocks[topic.id]) {
+              return (
+                <div
+                  className={css`
+                    display: ${activeBlock === topic.id ? "block" : "none"};
+                  `}
+                >
+                  <Topic topic={topic} />
+                </div>
+              );
+            }
+          })}
         </Container>
       </article>
     </>

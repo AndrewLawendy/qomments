@@ -46,6 +46,10 @@ const useRequiredForm = (initialFormValue: Values) => {
     if (isFormValid) cb(values);
   }
 
+  function setFieldValue(name: string, value: string) {
+    setValues({ ...values, [name]: value });
+  }
+
   function validateForm() {
     const validationErrors = { ...errors };
     let isFormValid = true;
@@ -71,6 +75,7 @@ const useRequiredForm = (initialFormValue: Values) => {
     errors,
     onChange,
     onBlur,
+    setFieldValue,
     destroyForm,
     handleSubmit,
   };
