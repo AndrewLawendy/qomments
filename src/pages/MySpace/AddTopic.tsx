@@ -1,24 +1,24 @@
-import { useState, ChangeEvent } from "react";
+import { useState } from "react";
 import { css } from "@emotion/css";
 import { Icon, Modal, Button, Form, Input } from "semantic-ui-react";
 
 import { Topic } from "~/types";
 import { useAddDocument } from "~/hooks/useCrud";
+import useRequiredForm from "~hooks/useRequiredForm";
 
 const AddTopic = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [topic, setTopic] = useState("");
-  const [isTouched, setTouched] = useState(false);
   const [addTopic] = useAddDocument<Topic>("topics");
-  const isError = isTouched && !topic;
+  const { values, errors, onChange, onBlur, destroyForm, handleSubmit } =
+    useRequiredForm({
+      Topic: "",
+    });
 
   function submitTopic() {
-    if (!topic) {
-      setTouched(true);
-    } else {
-      addTopic({ name: topic });
+    handleSubmit(({ Topic }) => {
+      addTopic({ name: Topic });
       setModalOpen(false);
-    }
+    });
   }
 
   return (
@@ -50,8 +50,7 @@ const AddTopic = () => {
         open={isModalOpen}
         onClose={() => {
           setModalOpen(false);
-          setTopic("");
-          setTouched(false);
+          destroyForm();
         }}
         size="tiny"
       >
@@ -62,22 +61,23 @@ const AddTopic = () => {
               id="topic"
               control={Input}
               label="Topic"
-              error={
-                isError && {
-                  content: "Topic is required",
-                  pointing: "above",
-                }
-              }
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setTopic(e.target.value);
-              }}
-              onBlur={() => setTouched(true)}
+              name="Topic"
+              value={values.Topic}
+              onChange={onChange}
+              onBlur={onBlur}
+              error={errors.Topic}
               autoFocus
             />
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          <Button negative onClick={() => setModalOpen(false)}>
+          <Button
+            negative
+            onClick={() => {
+              setModalOpen(false);
+              destroyForm();
+            }}
+          >
             Cancel
           </Button>
           <Button positive onClick={submitTopic}>
