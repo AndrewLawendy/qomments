@@ -176,7 +176,7 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
       <Confirm
         dimmer="blurring"
         open={isDeleteConfirmOpen}
-        content={`Are you sure you want to delete ${title}`}
+        content={`Are you sure you want to delete ${title}?`}
         cancelButton={
           <Button color="red" onClick={() => setDeleteConfirmOpen(false)}>
             No

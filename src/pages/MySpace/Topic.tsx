@@ -31,6 +31,7 @@ const Topic = ({ topic }: TopicProps) => {
   );
   const [blocks, setBlocks] = useState<Array<BlockType | null>>([]);
   const [deleteTopic, isDeleteTopicLoading] = useDeleteDocument("topics");
+  const [deleteBlock] = useDeleteDocument("blocks");
   const [isAddTopicValidated, setAddTopicValidated] = useState(false);
 
   useEffect(() => {
@@ -83,7 +84,7 @@ const Topic = ({ topic }: TopicProps) => {
               color="red"
               icon="trash"
               onClick={() => setDeleteConfirmOpen(true)}
-              disabled={isDeleteTopicLoading}
+              disabled={isBlocksLoading || isDeleteTopicLoading}
             />
           }
         />
@@ -168,7 +169,7 @@ const Topic = ({ topic }: TopicProps) => {
       <Confirm
         dimmer="blurring"
         open={isDeleteConfirmOpen}
-        content={`Are you sure you want to delete ${topic.name}`}
+        content={`Are you sure you want to delete ${topic.name} with all its blocks?`}
         cancelButton={
           <Button color="red" onClick={() => setDeleteConfirmOpen(false)}>
             No
@@ -181,6 +182,7 @@ const Topic = ({ topic }: TopicProps) => {
               if (topic?.id) {
                 setDeleteConfirmOpen(false);
                 deleteTopic(topic.id);
+                blocks.forEach((block) => block && deleteBlock(block.id));
               }
             }}
           >

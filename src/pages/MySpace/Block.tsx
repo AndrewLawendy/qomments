@@ -188,7 +188,7 @@ const Block = ({
       <Confirm
         dimmer="blurring"
         open={isDeleteConfirmOpen}
-        content={`Are you sure you want to delete Score ${score}`}
+        content={`Are you sure you want to delete Score ${score}?`}
         cancelButton={
           <Button color="red" onClick={() => setDeleteConfirmOpen(false)}>
             No
