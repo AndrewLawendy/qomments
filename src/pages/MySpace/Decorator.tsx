@@ -5,7 +5,6 @@ import {
   Segment,
   Header,
   Form,
-  TextArea,
   Popup,
   Button,
   Dimmer,
@@ -21,6 +20,7 @@ import {
   useDeleteDocument,
 } from "~/hooks/useCrud";
 import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
+import useRequiredForm from "~/hooks/useRequiredForm";
 
 type DecoratorsProps = {
   title: "Introduction" | "Closing";
@@ -28,7 +28,6 @@ type DecoratorsProps = {
 };
 
 const Decorator = ({ title, type }: DecoratorsProps) => {
-  const [body, setBody] = useState<string>("");
   const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection(
     where("type", "==", type)
   );
@@ -41,6 +40,11 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
   const [deleteDocument, isDeleteDocumentLoading] =
     useDeleteDocument("decorators");
 
+  const { values, errors, onChange, onBlur, setFieldValue, handleSubmit } =
+    useRequiredForm({
+      [title]: "",
+    });
+
   useEffect(() => {
     const decoratorsValues: Decorator[] = [];
     decoratorsRef?.forEach((document) =>
@@ -52,7 +56,7 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
 
     const [decorator] = decoratorsValues;
     setDecorator(decorator);
-    setBody(decorator?.body || "");
+    setFieldValue(title, decorator?.body || "");
   }, [decoratorsRef]);
 
   return (
@@ -84,9 +88,11 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
                     color="blue"
                     icon="sync"
                     onClick={() =>
-                      updateDocument(decorator.id, {
-                        body,
-                      })
+                      handleSubmit(({ [title]: body }) =>
+                        updateDocument(decorator.id, {
+                          body,
+                        })
+                      )
                     }
                     disabled={isUpdateDocumentLoading}
                   />
@@ -96,10 +102,12 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
                     color="green"
                     icon="plus"
                     onClick={() =>
-                      addDocument({
-                        body,
-                        type,
-                      })
+                      handleSubmit(({ [title]: body }) =>
+                        addDocument({
+                          body,
+                          type,
+                        })
+                      )
                     }
                     disabled={isAddDocumentLoading}
                   />
@@ -124,13 +132,17 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
         </div>
       </div>
       <Form>
-        <TextArea
-          value={body}
+        <Form.TextArea
+          name={title}
+          placeholder={`Fill ${title}...`}
+          value={values[title]}
+          error={errors[title]}
+          onChange={onChange}
+          onBlur={onBlur}
+          autoFocus={true}
           className={css`
             resize: none !important;
           `}
-          placeholder={`Fill ${title}...`}
-          onChange={(e) => setBody(e.target.value)}
         />
       </Form>
       {decorator?.updatedAt && (
