@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { css } from "@emotion/css";
 import { Icon, Modal, Button, Form, Input } from "semantic-ui-react";
 
@@ -7,6 +8,7 @@ import { useAddDocument } from "~/hooks/useCrud";
 import useRequiredForm from "~hooks/useRequiredForm";
 
 const AddTopic = () => {
+  const [, setLocation] = useLocation();
   const [isModalOpen, setModalOpen] = useState(false);
   const [addTopic] = useAddDocument<Topic>("topics");
   const { values, errors, onChange, onBlur, destroyForm, handleSubmit } =
@@ -16,7 +18,9 @@ const AddTopic = () => {
 
   function submitTopic() {
     handleSubmit(({ Topic }) => {
-      addTopic({ name: Topic });
+      addTopic({ name: Topic }).then(({ id }) => {
+        setLocation(`/${id}`);
+      });
       setModalOpen(false);
       destroyForm();
     });
