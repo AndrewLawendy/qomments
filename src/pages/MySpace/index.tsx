@@ -9,26 +9,32 @@ import { Topic as TopicType } from "~types";
 
 import Aside from "./Aside";
 import ActiveBlock from "./ActiveBlock";
+import TopicNotFound from "./TopicNotFound";
 
 const MySpace = () => {
   const { authData } = useAuthContext();
   const [, params] = useRoute("/:activeBlock");
+  const [paths, setPaths] = useState(["introduction", "closing"]);
   const [mountBlocks, setMountBlocks] = useState<{ [key: string]: boolean }>({
     [params?.activeBlock || "introduction"]: true,
   });
   const [topicsRef, isTopicsLoading] = useTopicsCollection();
   const [topics, setTopics] = useState<TopicType[]>([]);
+  const isPathValid = paths.includes(params?.activeBlock || "");
 
   useEffect(() => {
     const topicsValues: TopicType[] = [];
-    topicsRef?.forEach((topic) =>
+    const topicsPaths: string[] = [];
+    topicsRef?.forEach((topic) => {
       topicsValues.push({
         id: topic.id,
         ...topic.data(),
-      } as TopicType)
-    );
+      } as TopicType);
+      topicsPaths.push(topic.id);
+    });
 
     setTopics(topicsValues);
+    setPaths([...paths, ...topicsPaths]);
   }, [topicsRef]);
 
   useEffect(() => {
@@ -70,7 +76,7 @@ const MySpace = () => {
             )}
           </Route>
 
-          {!isTopicsLoading && (
+          {!isTopicsLoading && isPathValid && (
             <Message
               info
               icon="info circle"
@@ -79,6 +85,8 @@ const MySpace = () => {
               (*)"
             />
           )}
+
+          {!isTopicsLoading && !isPathValid && <TopicNotFound />}
         </Container>
       </article>
     </>
