@@ -10,6 +10,7 @@ import {
   Grid,
   Message,
   Icon,
+  Confirm,
 } from "semantic-ui-react";
 
 import { useDeleteDocument } from "~/hooks/useCrud";
@@ -24,6 +25,7 @@ type TopicProps = {
 };
 
 const Topic = ({ topic }: TopicProps) => {
+  const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [blocksRef, isBlocksLoading] = useBlocksCollection(
     where("topic", "==", topic.id)
   );
@@ -80,7 +82,7 @@ const Topic = ({ topic }: TopicProps) => {
               circular
               color="red"
               icon="trash"
-              onClick={() => deleteTopic(topic.id)}
+              onClick={() => setDeleteConfirmOpen(true)}
               disabled={isDeleteTopicLoading}
             />
           }
@@ -162,6 +164,31 @@ const Topic = ({ topic }: TopicProps) => {
           Add Topic Block
         </Button>
       </div>
+
+      <Confirm
+        dimmer="blurring"
+        open={isDeleteConfirmOpen}
+        content={`Are you sure you want to delete ${topic.name}`}
+        cancelButton={
+          <Button color="red" onClick={() => setDeleteConfirmOpen(false)}>
+            No
+          </Button>
+        }
+        confirmButton={
+          <Button
+            color="green"
+            onClick={() => {
+              if (topic?.id) {
+                setDeleteConfirmOpen(false);
+                deleteTopic(topic.id);
+              }
+            }}
+          >
+            Yes
+          </Button>
+        }
+        onCancel={() => setDeleteConfirmOpen(false)}
+      />
     </>
   );
 };

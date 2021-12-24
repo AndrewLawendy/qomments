@@ -186,6 +186,7 @@ const Block = ({
       </Segment>
 
       <Confirm
+        dimmer="blurring"
         open={isDeleteConfirmOpen}
         content={`Are you sure you want to delete Score ${score}`}
         cancelButton={
