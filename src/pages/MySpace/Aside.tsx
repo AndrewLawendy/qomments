@@ -1,5 +1,5 @@
 import { useRoute, useLocation } from "wouter";
-import { Header, Button, Loader, Segment } from "semantic-ui-react";
+import { Header, Button, Loader, Segment, Message } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
 import AddTopic from "./AddTopic";
@@ -111,6 +111,14 @@ const Aside = ({ userName, isTopicsLoading, topics }: AsideProps) => {
               }}
             />
           ))}
+          {!isTopicsLoading && topics.length === 0 && (
+            <Message
+              info
+              icon="question"
+              header="No Topics?"
+              content="Click on plus button to add new topic"
+            />
+          )}
         </div>
       </Segment>
     </aside>
