@@ -18,6 +18,7 @@ const AddTopic = () => {
     handleSubmit(({ Topic }) => {
       addTopic({ name: Topic });
       setModalOpen(false);
+      destroyForm();
     });
   }
 
