@@ -26,7 +26,7 @@ const useRequiredForm = (initialFormValue: Values) => {
 
   function onChange({
     target: { name, value },
-  }: ChangeEvent<HTMLInputElement>) {
+  }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setValues({ ...values, [name]: value });
   }
 
@@ -41,7 +41,7 @@ const useRequiredForm = (initialFormValue: Values) => {
   }
 
   function handleSubmit(cb: (values: Values) => void) {
-    const isFormValid = validateForm();
+    const isFormValid = validateForm(true);
 
     if (isFormValid) cb(values);
   }
@@ -50,12 +50,12 @@ const useRequiredForm = (initialFormValue: Values) => {
     setValues({ ...values, [name]: value });
   }
 
-  function validateForm() {
+  function validateForm(onSubmit = false) {
     const validationErrors = { ...errors };
     let isFormValid = true;
 
     for (const name in values) {
-      if (!values[name] && touched[name]) {
+      if (!values[name] && (touched[name] || onSubmit)) {
         isFormValid = false;
         validationErrors[name] = {
           content: `${name} is a required field`,

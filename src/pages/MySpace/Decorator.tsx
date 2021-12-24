@@ -33,11 +33,11 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
   );
   const [decorator, setDecorator] = useState<Decorator | null>();
 
-  const [addDocument, isAddDocumentLoading] =
+  const [addDecorator, isAddDecoratorLoading] =
     useAddDocument<Decorator>("decorators");
-  const [updateDocument, isUpdateDocumentLoading] =
+  const [updateDecorator, isUpdateDecoratorLoading] =
     useUpdateDocument<Omit<Decorator, "type">>("decorators");
-  const [deleteDocument, isDeleteDocumentLoading] =
+  const [deleteDecorator, isDeleteDecoratorLoading] =
     useDeleteDocument("decorators");
 
   const { values, errors, onChange, onBlur, setFieldValue, handleSubmit } =
@@ -89,12 +89,12 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
                     icon="sync"
                     onClick={() =>
                       handleSubmit(({ [title]: body }) =>
-                        updateDocument(decorator.id, {
+                        updateDecorator(decorator.id, {
                           body,
                         })
                       )
                     }
-                    disabled={isUpdateDocumentLoading}
+                    disabled={isUpdateDecoratorLoading}
                   />
                 ) : (
                   <Button
@@ -103,13 +103,13 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
                     icon="plus"
                     onClick={() =>
                       handleSubmit(({ [title]: body }) =>
-                        addDocument({
+                        addDecorator({
                           body,
                           type,
                         })
                       )
                     }
-                    disabled={isAddDocumentLoading}
+                    disabled={isAddDecoratorLoading}
                   />
                 )
               }
@@ -123,8 +123,8 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
                   circular
                   color="red"
                   icon="trash"
-                  onClick={() => deleteDocument(decorator.id)}
-                  disabled={isDeleteDocumentLoading}
+                  onClick={() => deleteDecorator(decorator.id)}
+                  disabled={isDeleteDecoratorLoading}
                 />
               }
             />

@@ -134,8 +134,7 @@ const MySpace = () => {
       >
         <Container
           className={css`
-            padding-top: 48px;
-            padding-bottom: 48px;
+            padding: 48px 24px;
           `}
         >
           {mountBlocks.Introduction && (
@@ -164,6 +163,7 @@ const MySpace = () => {
                   className={css`
                     display: ${activeBlock === topic.id ? "block" : "none"};
                   `}
+                  key={topic.id}
                 >
                   <Topic topic={topic} />
                 </div>
