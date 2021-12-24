@@ -1,6 +1,7 @@
 import { Route } from "wouter";
 import { css } from "@emotion/css";
 
+import NestedRouter from "~components/NestedRouter";
 import Header from "~/components/Header";
 import Generator from "~/pages/Generator";
 import MySpace from "./MySpace";
@@ -22,7 +23,9 @@ const Main = () => {
         `}
       >
         <Route path="/" component={Generator} />
-        <Route path="/my-space" component={MySpace} />
+        <NestedRouter base="/my-space">
+          <MySpace />
+        </NestedRouter>
       </main>
     </div>
   );

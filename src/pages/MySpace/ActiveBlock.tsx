@@ -21,20 +21,20 @@ const ActiveBlock = ({
 }: ActiveBlockProps) => {
   return (
     <>
-      {mountBlocks.Introduction && (
+      {mountBlocks.introduction && (
         <div
           className={css`
-            display: ${activeBlock === "Introduction" ? "block" : "none"};
+            display: ${activeBlock === "introduction" ? "block" : "none"};
           `}
         >
           <Decorator title="Introduction" type="introduction" />
         </div>
       )}
 
-      {mountBlocks.Closing && (
+      {mountBlocks.closing && (
         <div
           className={css`
-            display: ${activeBlock === "Closing" ? "block" : "none"};
+            display: ${activeBlock === "closing" ? "block" : "none"};
           `}
         >
           <Decorator title="Closing" type="closing" />

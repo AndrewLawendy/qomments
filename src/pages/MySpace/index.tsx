@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Route, Redirect, useRoute } from "wouter";
 import { Container, Message } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
@@ -11,9 +12,9 @@ import ActiveBlock from "./ActiveBlock";
 
 const MySpace = () => {
   const { authData } = useAuthContext();
-  const [activeBlock, setActiveBlock] = useState("Introduction");
+  const [, params] = useRoute("/:activeBlock");
   const [mountBlocks, setMountBlocks] = useState<{ [key: string]: boolean }>({
-    Introduction: true,
+    [params?.activeBlock || "introduction"]: true,
   });
   const [topicsRef, isTopicsLoading] = useTopicsCollection();
   const [topics, setTopics] = useState<TopicType[]>([]);
@@ -30,15 +31,21 @@ const MySpace = () => {
     setTopics(topicsValues);
   }, [topicsRef]);
 
+  useEffect(() => {
+    if (params?.activeBlock) {
+      if (!mountBlocks[params.activeBlock]) {
+        setMountBlocks({ ...mountBlocks, [params.activeBlock]: true });
+      }
+    }
+  }, [params]);
+
   if (authData === null) return null;
 
   return (
     <>
+      {!params && <Redirect to="/introduction" />}
       <Aside
         userName={authData.displayName}
-        activeBlock={activeBlock}
-        setActiveBlock={setActiveBlock}
-        setMountBlocks={setMountBlocks}
         mountBlocks={mountBlocks}
         isTopicsLoading={isTopicsLoading}
         topics={topics}
@@ -53,19 +60,25 @@ const MySpace = () => {
             padding: 48px 24px;
           `}
         >
-          <ActiveBlock
-            activeBlock={activeBlock}
-            mountBlocks={mountBlocks}
-            topics={topics}
-          />
+          <Route path="/:activeBlock">
+            {({ activeBlock }) => (
+              <ActiveBlock
+                activeBlock={activeBlock}
+                mountBlocks={mountBlocks}
+                topics={topics}
+              />
+            )}
+          </Route>
 
-          <Message
-            info
-            icon="info circle"
-            header="Hint"
-            content="You can always refer to the person's name using this character
+          {!isTopicsLoading && (
+            <Message
+              info
+              icon="info circle"
+              header="Hint"
+              content="You can always refer to the person's name using this character
               (*)"
-          />
+            />
+          )}
         </Container>
       </article>
     </>

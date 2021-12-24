@@ -1,4 +1,4 @@
-import { Dispatch } from "react";
+import { useRoute, useLocation } from "wouter";
 import { Header, Button, Loader } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
@@ -8,13 +8,6 @@ import { Topic } from "~/types";
 
 type AsideProps = {
   userName: string | null;
-  activeBlock: string;
-  setActiveBlock: Dispatch<React.SetStateAction<string>>;
-  setMountBlocks: Dispatch<
-    React.SetStateAction<{
-      [key: string]: boolean;
-    }>
-  >;
   mountBlocks: {
     [key: string]: boolean;
   };
@@ -22,15 +15,10 @@ type AsideProps = {
   topics: Topic[];
 };
 
-const Aside = ({
-  userName,
-  activeBlock,
-  setActiveBlock,
-  setMountBlocks,
-  mountBlocks,
-  isTopicsLoading,
-  topics,
-}: AsideProps) => {
+const Aside = ({ userName, isTopicsLoading, topics }: AsideProps) => {
+  const [, params] = useRoute("/:activeBlock");
+  const [, setLocation] = useLocation();
+
   return (
     <aside
       className={css`
@@ -58,10 +46,9 @@ const Aside = ({
           content="Introduction"
           icon="bookmark"
           labelPosition="left"
-          color={activeBlock === "Introduction" ? "orange" : "yellow"}
+          color={params?.activeBlock === "introduction" ? "orange" : "yellow"}
           onClick={() => {
-            setActiveBlock("Introduction");
-            setMountBlocks({ ...mountBlocks, Introduction: true });
+            setLocation("/introduction");
           }}
         />
         <Button
@@ -69,10 +56,9 @@ const Aside = ({
           content="Closing"
           icon="bookmark"
           labelPosition="left"
-          color={activeBlock === "Closing" ? "orange" : "yellow"}
+          color={params?.activeBlock === "closing" ? "orange" : "yellow"}
           onClick={() => {
-            setActiveBlock("Closing");
-            setMountBlocks({ ...mountBlocks, Closing: true });
+            setLocation("/closing");
           }}
         />
       </div>
@@ -116,10 +102,9 @@ const Aside = ({
             content={topic.name}
             icon="bookmark"
             labelPosition="left"
-            color={activeBlock === topic.id ? "orange" : "yellow"}
+            color={params?.activeBlock === topic.id ? "orange" : "yellow"}
             onClick={() => {
-              setActiveBlock(topic.id);
-              setMountBlocks({ ...mountBlocks, [topic.id]: true });
+              setLocation(`/${topic.id}`);
             }}
           />
         ))}

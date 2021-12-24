@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { css } from "@emotion/css";
 import { where } from "firebase/firestore";
 import {
@@ -25,6 +26,7 @@ type TopicProps = {
 };
 
 const Topic = ({ topic }: TopicProps) => {
+  const [, setLocation] = useLocation();
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [blocksRef, isBlocksLoading] = useBlocksCollection(
     where("topic", "==", topic.id)
@@ -183,6 +185,7 @@ const Topic = ({ topic }: TopicProps) => {
                 setDeleteConfirmOpen(false);
                 deleteTopic(topic.id);
                 blocks.forEach((block) => block && deleteBlock(block.id));
+                setLocation("/introduction");
               }
             }}
           >
