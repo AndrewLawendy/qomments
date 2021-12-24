@@ -8,6 +8,8 @@ import {
   Segment,
   Placeholder,
   Grid,
+  Message,
+  Icon,
 } from "semantic-ui-react";
 
 import { useDeleteDocument } from "~/hooks/useCrud";
@@ -27,6 +29,7 @@ const Topic = ({ topic }: TopicProps) => {
   );
   const [blocks, setBlocks] = useState<Array<BlockType | null>>([]);
   const [deleteTopic, isDeleteTopicLoading] = useDeleteDocument("topics");
+  const [isAddTopicValidated, setAddTopicValidated] = useState(false);
 
   useEffect(() => {
     const blocksValues: BlockType[] = [];
@@ -38,15 +41,26 @@ const Topic = ({ topic }: TopicProps) => {
     );
 
     setBlocks(blocksValues);
+    setAddTopicValidated(false);
   }, [blocksRef]);
 
   function addNewBlock() {
-    setBlocks([...blocks, null]);
+    setAddTopicValidated(true);
+    const canAdd = isLastBlockConfirmed();
+    if (canAdd) {
+      setBlocks([...blocks, null]);
+      setAddTopicValidated(false);
+    }
   }
 
   function deleteLastBlock() {
     const verifiedBlocks = blocks.slice(0, blocks.length - 1);
     setBlocks(verifiedBlocks);
+  }
+
+  function isLastBlockConfirmed() {
+    const lastBlock = blocks[blocks.length - 1];
+    return lastBlock !== null;
   }
 
   return (
@@ -107,9 +121,6 @@ const Topic = ({ topic }: TopicProps) => {
               `}
             >
               <Header size="tiny">No blocks attributed to this topic</Header>
-              <Button color="yellow" onClick={addNewBlock}>
-                Add Topic Block
-              </Button>
             </div>
           )}
         </>
@@ -125,6 +136,32 @@ const Topic = ({ topic }: TopicProps) => {
           deleteLastBlock={deleteLastBlock}
         />
       ))}
+
+      {isAddTopicValidated && !isLastBlockConfirmed() && (
+        <Message
+          attached="bottom"
+          warning
+          className={css`
+            margin-top: -1.2rem !important;
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+          `}
+        >
+          <Icon name="exclamation" />
+          Can not add new topic while the last one is not confirmed yet
+        </Message>
+      )}
+
+      <div
+        className={css`
+          margin-top: 12px;
+          text-align: center;
+        `}
+      >
+        <Button color="yellow" onClick={addNewBlock}>
+          Add Topic Block
+        </Button>
+      </div>
     </>
   );
 };
