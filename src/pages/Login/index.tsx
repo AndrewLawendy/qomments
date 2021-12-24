@@ -4,7 +4,6 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   signInWithRedirect,
-  signInWithPopup,
 } from "firebase/auth";
 import { css } from "@emotion/css";
 import {
@@ -135,13 +134,9 @@ const Login = () => {
                   margin-bottom: 1rem !important;
                 `}
                 disabled={isLoading}
-                onClick={() => signInWithPopup(auth, facebookAuthProvider)}
+                onClick={() => signInWithRedirect(auth, facebookAuthProvider)}
               >
                 <Icon name="facebook" /> Sign in with Facebook
-              </Button>
-
-              <Button color="red" fluid disabled={isLoading}>
-                <Icon name="mail" /> Sing with email
               </Button>
             </div>
           </Container>
