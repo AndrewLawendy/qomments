@@ -61,6 +61,10 @@ const useRequiredForm = (initialFormValue: Values) => {
           content: `${name} is a required field`,
           pointing: "above",
         };
+
+        if (onSubmit) {
+          setTouched({ ...touched, [name]: true });
+        }
       } else {
         validationErrors[name] = null;
       }
