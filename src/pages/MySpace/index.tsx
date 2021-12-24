@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { Route, Redirect, useRoute } from "wouter";
-import { Container, Message } from "semantic-ui-react";
+import {
+  Container,
+  Message,
+  Segment,
+  Placeholder,
+  Dimmer,
+  Loader,
+} from "semantic-ui-react";
 import { css } from "@emotion/css";
 
 import { useAuthContext } from "~contexts/AuthContext";
@@ -66,27 +73,47 @@ const MySpace = () => {
             padding: 48px 24px;
           `}
         >
-          <Route path="/:activeBlock">
-            {({ activeBlock }) => (
-              <ActiveBlock
-                activeBlock={activeBlock}
-                mountBlocks={mountBlocks}
-                topics={topics}
-              />
+          <Segment raised>
+            {isTopicsLoading ? (
+              <>
+                <Dimmer active inverted>
+                  <Loader inverted>Loading topics</Loader>
+                </Dimmer>
+
+                <Placeholder fluid>
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                </Placeholder>
+              </>
+            ) : (
+              <>
+                <Route path="/:activeBlock">
+                  {({ activeBlock }) => (
+                    <ActiveBlock
+                      activeBlock={activeBlock}
+                      mountBlocks={mountBlocks}
+                      topics={topics}
+                    />
+                  )}
+                </Route>
+
+                {isPathValid ? (
+                  <Message
+                    info
+                    icon="info circle"
+                    header="Hint"
+                    content="You can always refer to the person's name using this character
+            (*)"
+                  />
+                ) : (
+                  <TopicNotFound />
+                )}
+              </>
             )}
-          </Route>
-
-          {!isTopicsLoading && isPathValid && (
-            <Message
-              info
-              icon="info circle"
-              header="Hint"
-              content="You can always refer to the person's name using this character
-              (*)"
-            />
-          )}
-
-          {!isTopicsLoading && !isPathValid && <TopicNotFound />}
+          </Segment>
         </Container>
       </article>
     </>

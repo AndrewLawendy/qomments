@@ -20,6 +20,7 @@ const Main = () => {
         className={css`
           flex: 1;
           display: flex;
+          background-color: #f5f7fb;
         `}
       >
         <Route path="/" component={Generator} />

@@ -1,5 +1,5 @@
 import { useRoute, useLocation } from "wouter";
-import { Header, Button, Loader } from "semantic-ui-react";
+import { Header, Button, Loader, Segment } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
 import AddTopic from "./AddTopic";
@@ -26,89 +26,93 @@ const Aside = ({ userName, isTopicsLoading, topics }: AsideProps) => {
         top: 56px;
         width: 250px;
         height: calc(100vh - 56px);
-        padding: 48px 16px;
-        background-color: #ffeaa7;
-        border-right: 2px solid #fab139;
       `}
     >
-      <Header as="h2">Welcome {userName}</Header>
-
-      <Header as="h4">Decorators</Header>
-      <div
+      <Segment
+        raised
         className={css`
-          button:nth-of-type(1n + 2) {
-            margin-top: 16px;
-          }
+          height: 100%;
         `}
       >
-        <Button
-          fluid
-          content="Introduction"
-          icon="bookmark"
-          labelPosition="left"
-          color={params?.activeBlock === "introduction" ? "orange" : "yellow"}
-          onClick={() => {
-            setLocation("/introduction");
-          }}
-        />
-        <Button
-          fluid
-          content="Closing"
-          icon="bookmark"
-          labelPosition="left"
-          color={params?.activeBlock === "closing" ? "orange" : "yellow"}
-          onClick={() => {
-            setLocation("/closing");
-          }}
-        />
-      </div>
+        <Header as="h2">Welcome {userName}</Header>
 
-      <div
-        className={css`
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-top: 32px;
-          margin-bottom: 14px;
-        `}
-      >
-        <Header
-          as="h4"
+        <Header as="h4">Decorators</Header>
+        <div
           className={css`
-            margin-bottom: 0 !important;
+            button:nth-of-type(1n + 2) {
+              margin-top: 16px;
+            }
           `}
         >
-          Topics
-        </Header>
-        <AddTopic />
-      </div>
-
-      {isTopicsLoading && (
-        <Loader active inline="centered">
-          Loading Topics
-        </Loader>
-      )}
-      <div
-        className={css`
-          button:nth-of-type(1n + 2) {
-            margin-top: 16px;
-          }
-        `}
-      >
-        {topics.map((topic) => (
           <Button
-            key={topic.id}
             fluid
-            content={topic.name}
+            content="Introduction"
             icon="bookmark"
             labelPosition="left"
-            color={params?.activeBlock === topic.id ? "orange" : "yellow"}
+            color={params?.activeBlock === "introduction" ? "orange" : "yellow"}
             onClick={() => {
-              setLocation(`/${topic.id}`);
+              setLocation("/introduction");
             }}
           />
-        ))}
-      </div>
+          <Button
+            fluid
+            content="Closing"
+            icon="bookmark"
+            labelPosition="left"
+            color={params?.activeBlock === "closing" ? "orange" : "yellow"}
+            onClick={() => {
+              setLocation("/closing");
+            }}
+          />
+        </div>
+
+        <div
+          className={css`
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+            margin-bottom: 14px;
+          `}
+        >
+          <Header
+            as="h4"
+            className={css`
+              margin-bottom: 0 !important;
+            `}
+          >
+            Topics
+          </Header>
+          <AddTopic />
+        </div>
+
+        {isTopicsLoading && (
+          <Loader active inline="centered">
+            Loading Topics
+          </Loader>
+        )}
+        <div
+          className={css`
+            button:nth-of-type(1n + 2) {
+              margin-top: 16px;
+            }
+          `}
+        >
+          {topics.map((topic) => (
+            <Button
+              key={topic.id}
+              fluid
+              content={topic.name}
+              icon="bookmark"
+              labelPosition="left"
+              color={params?.activeBlock === topic.id ? "orange" : "yellow"}
+              onClick={() => {
+                setLocation(`/${topic.id}`);
+              }}
+            />
+          ))}
+        </div>
+      </Segment>
     </aside>
   );
 };
