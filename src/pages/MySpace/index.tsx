@@ -40,6 +40,7 @@ const MySpace = () => {
           position: sticky;
           top: 56px;
           width: 250px;
+          height: calc(100vh - 56px);
           padding: 48px 16px;
           background-color: #ffeaa7;
           border-right: 2px solid #fab139;
