@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Header, Button, Loader } from "semantic-ui-react";
+import { Container, Header, Button, Loader, Message } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
 import { useAuthContext } from "~contexts/AuthContext";
@@ -171,6 +171,14 @@ const MySpace = () => {
               );
             }
           })}
+
+          <Message
+            info
+            icon="info circle"
+            header="Hint"
+            content="You can always refer to the person's name using this character
+              (*)"
+          />
         </Container>
       </article>
     </>
