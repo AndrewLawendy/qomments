@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
-import { Container, Header, Button, Loader, Message } from "semantic-ui-react";
+import { Container, Message } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
 import { useAuthContext } from "~contexts/AuthContext";
 import { useTopicsCollection } from "~/resources/useTopicsCollection";
 import { Topic as TopicType } from "~types";
 
-import Decorator from "./Decorator";
-import Topic from "./Topic";
-import AddTopic from "./AddTopic";
+import Aside from "./Aside";
+import ActiveBlock from "./ActiveBlock";
 
 const MySpace = () => {
   const { authData } = useAuthContext();
@@ -35,99 +34,15 @@ const MySpace = () => {
 
   return (
     <>
-      <aside
-        className={css`
-          position: sticky;
-          top: 56px;
-          width: 250px;
-          height: calc(100vh - 56px);
-          padding: 48px 16px;
-          background-color: #ffeaa7;
-          border-right: 2px solid #fab139;
-        `}
-      >
-        <Header as="h2">Welcome {authData.displayName}</Header>
-
-        <Header as="h4">Decorators</Header>
-        <div
-          className={css`
-            button:nth-of-type(1n + 2) {
-              margin-top: 16px;
-            }
-          `}
-        >
-          <Button
-            fluid
-            content="Introduction"
-            icon="bookmark"
-            labelPosition="left"
-            color={activeBlock === "Introduction" ? "orange" : "yellow"}
-            onClick={() => {
-              setActiveBlock("Introduction");
-              setMountBlocks({ ...mountBlocks, Introduction: true });
-            }}
-          />
-          <Button
-            fluid
-            content="Closing"
-            icon="bookmark"
-            labelPosition="left"
-            color={activeBlock === "Closing" ? "orange" : "yellow"}
-            onClick={() => {
-              setActiveBlock("Closing");
-              setMountBlocks({ ...mountBlocks, Closing: true });
-            }}
-          />
-        </div>
-
-        <div
-          className={css`
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 32px;
-            margin-bottom: 14px;
-          `}
-        >
-          <Header
-            as="h4"
-            className={css`
-              margin-bottom: 0 !important;
-            `}
-          >
-            Topics
-          </Header>
-          <AddTopic />
-        </div>
-
-        {isTopicsLoading && (
-          <Loader active inline="centered">
-            Loading Topics
-          </Loader>
-        )}
-        <div
-          className={css`
-            button:nth-of-type(1n + 2) {
-              margin-top: 16px;
-            }
-          `}
-        >
-          {topics.map((topic) => (
-            <Button
-              key={topic.id}
-              fluid
-              content={topic.name}
-              icon="bookmark"
-              labelPosition="left"
-              color={activeBlock === topic.id ? "orange" : "yellow"}
-              onClick={() => {
-                setActiveBlock(topic.id);
-                setMountBlocks({ ...mountBlocks, [topic.id]: true });
-              }}
-            />
-          ))}
-        </div>
-      </aside>
+      <Aside
+        userName={authData.displayName}
+        activeBlock={activeBlock}
+        setActiveBlock={setActiveBlock}
+        setMountBlocks={setMountBlocks}
+        mountBlocks={mountBlocks}
+        isTopicsLoading={isTopicsLoading}
+        topics={topics}
+      />
       <article
         className={css`
           flex-grow: 1;
@@ -138,39 +53,11 @@ const MySpace = () => {
             padding: 48px 24px;
           `}
         >
-          {mountBlocks.Introduction && (
-            <div
-              className={css`
-                display: ${activeBlock === "Introduction" ? "block" : "none"};
-              `}
-            >
-              <Decorator title="Introduction" type="introduction" />
-            </div>
-          )}
-
-          {mountBlocks.Closing && (
-            <div
-              className={css`
-                display: ${activeBlock === "Closing" ? "block" : "none"};
-              `}
-            >
-              <Decorator title="Closing" type="closing" />
-            </div>
-          )}
-          {topics.map((topic) => {
-            if (mountBlocks[topic.id]) {
-              return (
-                <div
-                  className={css`
-                    display: ${activeBlock === topic.id ? "block" : "none"};
-                  `}
-                  key={topic.id}
-                >
-                  <Topic topic={topic} />
-                </div>
-              );
-            }
-          })}
+          <ActiveBlock
+            activeBlock={activeBlock}
+            mountBlocks={mountBlocks}
+            topics={topics}
+          />
 
           <Message
             info
