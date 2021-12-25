@@ -56,7 +56,7 @@ const MySpace = () => {
 
   return (
     <>
-      {!params && <Redirect to="/introduction" />}
+      {!params && <Redirect to="/introduction" replace />}
       <Aside
         userName={authData.displayName}
         mountBlocks={mountBlocks}
@@ -70,7 +70,7 @@ const MySpace = () => {
       >
         <Container
           className={css`
-            padding: 48px 24px;
+            padding: 24px;
           `}
         >
           <Segment raised>
