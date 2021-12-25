@@ -24,7 +24,8 @@ const Aside = ({ userName, isTopicsLoading, topics }: AsideProps) => {
       className={css`
         position: sticky;
         top: 56px;
-        width: 250px;
+        flex-basis: 250px;
+        flex-shrink: 0;
         height: calc(100vh - 56px);
       `}
     >
