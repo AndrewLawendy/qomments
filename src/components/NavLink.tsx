@@ -9,7 +9,7 @@ type Props = {
 };
 
 const NavLink: FC<Props> = ({ href, children }) => {
-  const [active] = useRoute(href);
+  const [active] = useRoute(`${href}/:param?`);
 
   return (
     <li

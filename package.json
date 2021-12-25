@@ -2,8 +2,8 @@
   "main": "src/App.jsx",
   "scripts": {
     "clear-build-cache": "rm -rf .cache/ dist/",
-    "dev": "parcel src/index.html --open",
-    "build": "parcel build src/index.html --no-source-maps",
+    "start": "parcel src/index.html --open",
+    "build": "parcel build src/index.html --no-source-maps --out-dir prod",
     "format": "prettier --write \"src/**/*.{ts,tsx,scss}\"",
     "lint": "eslint \"src/**/*.{ts,tsx,scss}\" --fix --cache --quiet"
   },

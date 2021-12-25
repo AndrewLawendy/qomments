@@ -4,10 +4,10 @@ import { useCollection } from "react-firebase-hooks/firestore";
 import { useAuthContext } from "~contexts/AuthContext";
 import { db } from "~/utils/firebase";
 
-const useBlocksCollection = (...queryConstraints: QueryConstraint[]) => {
+const useTopicsCollection = (...queryConstraints: QueryConstraint[]) => {
   const { authData } = useAuthContext();
   const q = query(
-    collection(db, "blocks"),
+    collection(db, "topics"),
     where("user", "==", authData?.uid),
     ...queryConstraints
   );
@@ -16,4 +16,4 @@ const useBlocksCollection = (...queryConstraints: QueryConstraint[]) => {
   });
 };
 
-export { useBlocksCollection };
+export { useTopicsCollection };

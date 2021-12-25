@@ -2,36 +2,38 @@ import { signOut } from "firebase/auth";
 import { css } from "@emotion/css";
 import { Dropdown, Image, Header } from "semantic-ui-react";
 
-import useAuth from "~/hooks/useAuth";
+import { useAuthContext } from "~contexts/AuthContext";
 import { auth } from "~/utils/firebase";
 
 const User = () => {
-  const [user] = useAuth();
+  const { authData } = useAuthContext();
+
+  if (authData === null) return null;
 
   return (
     <Dropdown
-      as={({ children, ...props }) => {
-        return (
-          <div {...props} title={user?.displayName}>
-            <Image src={user?.photoURL} avatar alt="User Photo" />
-
-            {children}
-          </div>
-        );
-      }}
-      pointing="top right"
+      floating
+      trigger={
+        <Image
+          src={authData.photoURL}
+          title={authData.displayName}
+          alt="User Photo"
+          avatar
+        />
+      }
+      direction="left"
     >
       <Dropdown.Menu>
-        <Dropdown.Item>
+        <Dropdown.Header>
           <div
             className={css`
               text-align: center;
             `}
           >
             <Image
-              src={user?.photoURL}
+              src={authData.photoURL}
+              alt={authData.displayName}
               avatar
-              alt={user?.displayName}
               size="tiny"
             />
             <Header
@@ -41,11 +43,18 @@ const User = () => {
                 margin-bottom: 0.3rem !important;
               `}
             >
-              {user?.displayName}
+              {authData.displayName}
             </Header>
-            <p>{user?.email}</p>
+            <Header
+              size="tiny"
+              className={css`
+                margin-top: 0 !important;
+              `}
+            >
+              {authData.email}
+            </Header>
           </div>
-        </Dropdown.Item>
+        </Dropdown.Header>
         <Dropdown.Divider />
         <Dropdown.Item
           className={css`

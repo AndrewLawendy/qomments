@@ -1,5 +1,7 @@
 import { css } from "@emotion/css";
-import { Header as SemanticHeader } from "semantic-ui-react";
+import { Header as SemanticHeader, Image } from "semantic-ui-react";
+
+import Logo from "~/assets/logo.png";
 
 import NavLink from "./NavLink";
 import User from "./User";
@@ -27,6 +29,7 @@ const Header = () => {
           margin: 0 !important;
         `}
       >
+        <Image src={Logo} avatar size="mini" />
         qomments
       </SemanticHeader>
 
