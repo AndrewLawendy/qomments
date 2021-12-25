@@ -19,6 +19,7 @@ const useRequiredForm = (initialFormValue: Values) => {
   const [values, setValues] = useState(initialFormValue);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Touched>({});
+  const [isValid, setValid] = useState(false);
 
   useEffect(() => {
     validateForm();
@@ -50,6 +51,10 @@ const useRequiredForm = (initialFormValue: Values) => {
     setValues({ ...values, [name]: value });
   }
 
+  function setFieldTouched(name: string) {
+    setTouched({ ...touched, [name]: true });
+  }
+
   function validateForm(onSubmit = false) {
     const validationErrors = { ...errors };
     let isFormValid = true;
@@ -69,8 +74,9 @@ const useRequiredForm = (initialFormValue: Values) => {
         validationErrors[name] = null;
       }
     }
-    setErrors(validationErrors);
 
+    setErrors(validationErrors);
+    setValid(isFormValid);
     return isFormValid;
   }
 
@@ -80,7 +86,9 @@ const useRequiredForm = (initialFormValue: Values) => {
     onChange,
     onBlur,
     setFieldValue,
+    setFieldTouched,
     destroyForm,
+    isValid,
     handleSubmit,
   };
 };
