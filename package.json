@@ -3,7 +3,7 @@
   "scripts": {
     "clear-build-cache": "rm -rf .cache/ dist/",
     "start": "parcel src/index.html --open",
-    "build": "parcel build src/index.html --no-source-maps --out-dir prod",
+    "build": "rm -rf prod/ && parcel build src/index.html --no-source-maps --out-dir prod",
     "format": "prettier --write \"src/**/*.{ts,tsx,scss}\"",
     "lint": "eslint \"src/**/*.{ts,tsx,scss}\" --fix --cache --quiet"
   },
@@ -16,6 +16,7 @@
     "hooks": "^0.3.2",
     "pages": "^0.0.16",
     "react": "^17.0.1",
+    "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.1",
     "react-firebase-hooks": "^4.0.1",
     "semantic-ui-css": "^2.4.1",
@@ -30,6 +31,7 @@
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
     "@types/react": "^17.0.0",
+    "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-dom": "^17.0.0",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
