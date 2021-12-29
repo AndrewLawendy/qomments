@@ -90,8 +90,8 @@ const DroppedTopic = ({
                 />
 
                 <Header size="tiny">
-                  {topic.name} (
-                  {topic.score != undefined && `Score ${topic.score + 1}`})
+                  {topic.name}
+                  {topic.score != undefined && `(Score ${topic.score + 1})`}
                 </Header>
               </div>
 

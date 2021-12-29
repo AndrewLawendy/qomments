@@ -127,7 +127,7 @@ const Generator = () => {
       0,
       droppedItem
     );
-    setDroppedTopics(droppedTopics);
+    setDroppedTopics([...droppedTopics]);
   }
 
   function onDropEnd(result: DropResult) {
