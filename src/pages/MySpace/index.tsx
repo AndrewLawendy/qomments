@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Route, Redirect, useRoute } from "wouter";
 import {
-  Container,
   Message,
   Segment,
   Placeholder,
@@ -41,7 +40,7 @@ const MySpace = () => {
     });
 
     setTopics(topicsValues);
-    setPaths([...paths, ...topicsPaths]);
+    setPaths(["introduction", "closing", ...topicsPaths]);
   }, [topicsRef]);
 
   useEffect(() => {
@@ -56,7 +55,7 @@ const MySpace = () => {
 
   return (
     <>
-      {!params && <Redirect to="/introduction" />}
+      {!params && <Redirect to="/introduction" replace />}
       <Aside
         userName={authData.displayName}
         mountBlocks={mountBlocks}
@@ -68,9 +67,12 @@ const MySpace = () => {
           flex-grow: 1;
         `}
       >
-        <Container
+        <div
           className={css`
-            padding: 48px 24px;
+            width: 100%;
+            max-width: 1127px;
+            padding: 24px;
+            margin: 0 auto;
           `}
         >
           <Segment raised>
@@ -114,7 +116,7 @@ const MySpace = () => {
               </>
             )}
           </Segment>
-        </Container>
+        </div>
       </article>
     </>
   );
