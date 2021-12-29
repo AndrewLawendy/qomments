@@ -150,12 +150,12 @@ const Generator = () => {
 
       <DragDropContext onDragEnd={onDropEnd}>
         <Segment>
-          <Header as="h3">Topics</Header>
+          <Header as="h3">Decorators</Header>
           <Segment>
-            {(isDecoratorsLoading || isTopicsLoading) && (
+            {isDecoratorsLoading && (
               <>
                 <Dimmer active inverted>
-                  <Loader inverted>Loading topics</Loader>
+                  <Loader inverted>Loading Decorators</Loader>
                 </Dimmer>
 
                 <Placeholder fluid>
@@ -168,72 +168,101 @@ const Generator = () => {
               </>
             )}
 
-            {!isDecoratorsLoading &&
-              !isTopicsLoading &&
-              (decorators.length === 0 && topics.length === 0 ? (
-                <div
-                  className={css`
-                    text-align: center;
-                  `}
-                >
-                  <Header as="h3">No topics available</Header>
-                  <p>
-                    Go to <Link to="my-space">My Space</Link> to start adding
-                    topics
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <Droppable
-                    droppableId="availableDecorators"
-                    direction="horizontal"
+            {!isTopicsLoading && decorators.length === 0 ? (
+              <div
+                className={css`
+                  text-align: center;
+                `}
+              >
+                <Header as="h3">No decorators available</Header>
+                <p>
+                  Go to <Link to="my-space">My Space</Link> to start adding
+                  topics
+                </p>
+              </div>
+            ) : (
+              <Droppable
+                droppableId="availableDecorators"
+                direction="horizontal"
+              >
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className={css`
+                      display: flex;
+                      flex-wrap: wrap;
+                      gap: 12px;
+                    `}
                   >
-                    {(provided) => (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        className={css`
-                          display: flex;
-                          flex-wrap: wrap;
-                          gap: 12px;
-                        `}
-                      >
-                        {decorators.map((decorator, index) => (
-                          <TopicDraggable
-                            topic={decorator}
-                            key={decorator.id}
-                            index={index}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </Droppable>
-                  <Droppable
-                    droppableId="availableTopics"
-                    direction="horizontal"
+                    {decorators.map((decorator, index) => (
+                      <TopicDraggable
+                        topic={decorator}
+                        key={decorator.id}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                )}
+              </Droppable>
+            )}
+          </Segment>
+        </Segment>
+
+        <Segment>
+          <Header as="h3">Topics</Header>
+          <Segment>
+            {isDecoratorsLoading && (
+              <>
+                <Dimmer active inverted>
+                  <Loader inverted>Loading Topics</Loader>
+                </Dimmer>
+
+                <Placeholder fluid>
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                </Placeholder>
+              </>
+            )}
+
+            {!isDecoratorsLoading && topics.length === 0 ? (
+              <div
+                className={css`
+                  text-align: center;
+                `}
+              >
+                <Header as="h3">No topics available</Header>
+                <p>
+                  Go to <Link to="my-space">My Space</Link> to start adding
+                  topics
+                </p>
+              </div>
+            ) : (
+              <Droppable droppableId="availableTopics" direction="horizontal">
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className={css`
+                      display: flex;
+                      flex-wrap: wrap;
+                      gap: 12px;
+                    `}
                   >
-                    {(provided) => (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        className={css`
-                          display: flex;
-                          flex-wrap: wrap;
-                          gap: 12px;
-                        `}
-                      >
-                        {topics.map((topic, index) => (
-                          <TopicDraggable
-                            topic={topic}
-                            key={topic.id}
-                            index={index}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </Droppable>
-                </div>
-              ))}
+                    {topics.map((topic, index) => (
+                      <TopicDraggable
+                        topic={topic}
+                        key={topic.id}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                )}
+              </Droppable>
+            )}
           </Segment>
         </Segment>
 
