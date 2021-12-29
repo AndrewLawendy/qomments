@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Route, Redirect, useRoute } from "wouter";
 import {
-  Container,
   Message,
   Segment,
   Placeholder,
@@ -68,9 +67,12 @@ const MySpace = () => {
           flex-grow: 1;
         `}
       >
-        <Container
+        <div
           className={css`
+            width: 100%;
+            max-width: 1127px;
             padding: 24px;
+            margin: 0 auto;
           `}
         >
           <Segment raised>
@@ -114,7 +116,7 @@ const MySpace = () => {
               </>
             )}
           </Segment>
-        </Container>
+        </div>
       </article>
     </>
   );

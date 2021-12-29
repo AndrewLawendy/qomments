@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import {
-  Container,
   Segment,
   Header,
   Form,
@@ -167,9 +166,12 @@ const Generator = () => {
   }
 
   return (
-    <Container
+    <div
       className={css`
+        width: 100%;
+        max-width: 1127px;
         padding: 24px;
+        margin: 0 auto;
       `}
     >
       {/* Name and gender */}
@@ -407,7 +409,7 @@ const Generator = () => {
         </Segment>
         {/* End of Dropped Items */}
       </DragDropContext>
-    </Container>
+    </div>
   );
 };
 
