@@ -40,7 +40,7 @@ const MySpace = () => {
     });
 
     setTopics(topicsValues);
-    setPaths([...paths, ...topicsPaths]);
+    setPaths(["introduction", "closing", ...topicsPaths]);
   }, [topicsRef]);
 
   useEffect(() => {
