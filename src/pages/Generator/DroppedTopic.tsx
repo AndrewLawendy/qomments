@@ -6,6 +6,7 @@ import {
   Message,
   Icon,
   Header,
+  Popup,
   Button,
   Dimmer,
   Placeholder,
@@ -39,16 +40,10 @@ const DroppedTopic = ({
   const hasBlocks = blocks.length > 0;
   const hasScore = topic.score != undefined;
   const [openPopup, setOpenPopup] = useState(hasBlocks && !hasScore);
-  const {
-    values,
-    errors,
-    setFieldValue,
-    setFieldTouched,
-    destroyForm,
-    handleSubmit,
-  } = useRequiredForm({
-    Score: topic.score ? `${topic.score}` : "",
-  });
+  const { values, errors, setFieldValue, setFieldTouched, handleSubmit } =
+    useRequiredForm({
+      Score: topic.score ? `${topic.score}` : "",
+    });
   const scoreOptions = blocks.reduce<{ text: string; value: string }[]>(
     (options, _, index) => {
       options.push({
@@ -94,10 +89,30 @@ const DroppedTopic = ({
                   {...provided.dragHandleProps}
                 />
 
-                <Header size="tiny">{topic.name}</Header>
+                <Header size="tiny">
+                  {topic.name} (
+                  {topic.score != undefined && `Score ${topic.score + 1}`})
+                </Header>
               </div>
 
-              <Button icon="trash" size="mini" />
+              <div>
+                {hasBlocks && hasScore && (
+                  <Popup
+                    content={`Edit ${topic.name} Score`}
+                    trigger={
+                      <Button
+                        icon="edit"
+                        size="mini"
+                        onClick={() => setOpenPopup(true)}
+                      />
+                    }
+                  />
+                )}
+                <Popup
+                  content={`Delete ${topic.name}`}
+                  trigger={<Button icon="trash" size="mini" />}
+                />
+              </div>
             </Message>
 
             <Segment attached>
@@ -144,7 +159,6 @@ const DroppedTopic = ({
         closeOnEscape={hasScore}
         onClose={() => {
           setOpenPopup(false);
-          destroyForm();
         }}
         size="tiny"
       >
@@ -170,7 +184,6 @@ const DroppedTopic = ({
               negative
               onClick={() => {
                 setOpenPopup(false);
-                destroyForm();
               }}
             >
               Cancel
