@@ -19,12 +19,15 @@ import { css } from "@emotion/css";
 
 import TopicDraggable from "./TopicDraggable";
 import DroppedDecorator from "./DroppedDecorator";
+import DroppedTopic from "./DroppedTopic";
 
 import useRequiredForm from "~hooks/useRequiredForm";
 import { useTopicsCollection } from "~/resources/useTopicsCollection";
 import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
+import { useBlocksCollection } from "~resources/useBlocksCollection";
 
-import { Topic, Decorator } from "~/types";
+import { Decorator, Block } from "~/types";
+import { GeneratorTopic } from "./types";
 
 const genderOptions = [
   {
@@ -37,8 +40,10 @@ const genderOptions = [
   },
 ];
 
-function isTopic(droppedTopic: Decorator | Topic): droppedTopic is Topic {
-  return (droppedTopic as Topic).name !== undefined;
+function isTopic(
+  droppedTopic: Decorator | GeneratorTopic
+): droppedTopic is GeneratorTopic {
+  return (droppedTopic as GeneratorTopic).name !== undefined;
 }
 
 const Generator = () => {
@@ -51,11 +56,14 @@ const Generator = () => {
   const [decorators, setDecorators] = useState<Decorator[]>([]);
 
   const [topicsRef, isTopicsLoading] = useTopicsCollection();
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const [topics, setTopics] = useState<GeneratorTopic[]>([]);
 
-  const [droppedTopics, setDroppedTopics] = useState<Array<Decorator | Topic>>(
-    []
-  );
+  const [blocksRef, isBlocksLoading] = useBlocksCollection();
+  const [blocks, setBlocks] = useState<{ [id: string]: Block[] }>({});
+
+  const [droppedTopics, setDroppedTopics] = useState<
+    Array<Decorator | GeneratorTopic>
+  >([]);
 
   useEffect(() => {
     const decorators: Decorator[] = [];
@@ -70,21 +78,34 @@ const Generator = () => {
   }, [decoratorsRef]);
 
   useEffect(() => {
-    const topicsValues: Topic[] = [];
-    const topicsPaths: string[] = [];
-    topicsRef?.forEach((topic) => {
+    const topicsValues: GeneratorTopic[] = [];
+    topicsRef?.forEach((document) => {
       topicsValues.push({
-        id: topic.id,
-        ...topic.data(),
-      } as Topic);
-      topicsPaths.push(topic.id);
+        id: document.id,
+        ...document.data(),
+      } as GeneratorTopic);
     });
 
     setTopics(topicsValues);
   }, [topicsRef]);
 
+  useEffect(() => {
+    const blocksValues: { [id: string]: Block[] } = {};
+    blocksRef?.forEach((document) => {
+      const block: Block = {
+        id: document.id,
+        ...(document.data() as Omit<Block, "id">),
+      };
+
+      if (!blocksValues[block.topic]) blocksValues[block.topic] = [];
+      blocksValues[block.topic].push(block);
+    });
+
+    setBlocks(blocksValues);
+  }, [blocksRef]);
+
   function handleDropped({ source, destination }: DropResult) {
-    let droppedItem: Decorator | Topic;
+    let droppedItem: Decorator | GeneratorTopic;
     if (source.droppableId === (destination as DraggableLocation).droppableId) {
       // Reorder
       [droppedItem] = droppedTopics.splice(source.index, 1);
@@ -112,6 +133,13 @@ const Generator = () => {
     if (destination.droppableId === "droppedTopics") {
       handleDropped(result);
     }
+  }
+
+  function onTopicScoreChange(index: number, score: number) {
+    const topic = droppedTopics[index];
+    (topic as GeneratorTopic).score = score;
+
+    setDroppedTopics(droppedTopics);
   }
 
   return (
@@ -168,7 +196,7 @@ const Generator = () => {
               </>
             )}
 
-            {!isTopicsLoading && decorators.length === 0 ? (
+            {!isDecoratorsLoading && decorators.length === 0 ? (
               <div
                 className={css`
                   text-align: center;
@@ -202,6 +230,7 @@ const Generator = () => {
                         index={index}
                       />
                     ))}
+                    {provided.placeholder}
                   </div>
                 )}
               </Droppable>
@@ -212,7 +241,7 @@ const Generator = () => {
         <Segment>
           <Header as="h3">Topics</Header>
           <Segment>
-            {isDecoratorsLoading && (
+            {isTopicsLoading && isBlocksLoading && (
               <>
                 <Dimmer active inverted>
                   <Loader inverted>Loading Topics</Loader>
@@ -228,7 +257,7 @@ const Generator = () => {
               </>
             )}
 
-            {!isDecoratorsLoading && topics.length === 0 ? (
+            {!isTopicsLoading && !isBlocksLoading && topics.length === 0 ? (
               <div
                 className={css`
                   text-align: center;
@@ -259,6 +288,7 @@ const Generator = () => {
                         index={index}
                       />
                     ))}
+                    {provided.placeholder}
                   </div>
                 )}
               </Droppable>
@@ -288,7 +318,19 @@ const Generator = () => {
                     const isDroppedTopic = isTopic(droppedTopic);
 
                     if (isDroppedTopic) {
-                      return null;
+                      return (
+                        <DroppedTopic
+                          key={droppedTopic.id}
+                          topic={droppedTopic}
+                          blocks={blocks[droppedTopic.id] || []}
+                          onTopicScoreChange={onTopicScoreChange}
+                          index={index}
+                          name={values.Name}
+                          gender={
+                            values.Gender as "maleContent" | "femaleContent"
+                          }
+                        />
+                      );
                     } else {
                       return (
                         <DroppedDecorator

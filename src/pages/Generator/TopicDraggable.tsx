@@ -3,6 +3,7 @@ import { Label } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
 import { Topic, Decorator } from "~types";
+import { startCase } from "~/utils";
 
 type TopicDragSourceProps = {
   topic: Topic | Decorator;
@@ -30,7 +31,7 @@ const TopicDragSource = ({ topic, index }: TopicDragSourceProps) => {
           {isDroppedTopic ? (
             <Label>{topic.name}</Label>
           ) : (
-            <Label>{topic.type}</Label>
+            <Label>{startCase(topic.type)}</Label>
           )}
         </div>
       )}

@@ -46,7 +46,9 @@ const DroppedDecorator = ({
 
             <Button icon="trash" size="mini" />
           </Message>
-          <Segment attached>{decorator.body.replaceAll("*", name)}</Segment>
+          <Segment attached>
+            {decorator.body.replaceAll("*", name || "*")}
+          </Segment>
         </div>
       )}
     </Draggable>
