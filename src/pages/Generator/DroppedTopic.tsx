@@ -12,6 +12,7 @@ import {
   Placeholder,
   Modal,
   Form,
+  Confirm,
 } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
@@ -24,6 +25,7 @@ type DroppedTopicProps = {
   topic: GeneratorTopic;
   blocks: Block[];
   onTopicScoreChange: (index: number, score: number) => void;
+  onTopicDelete: () => void;
   index: number;
   name: string;
   gender: "maleContent" | "femaleContent";
@@ -33,6 +35,7 @@ const DroppedTopic = ({
   topic,
   blocks,
   onTopicScoreChange,
+  onTopicDelete,
   index,
   name,
   gender,
@@ -40,6 +43,7 @@ const DroppedTopic = ({
   const hasBlocks = blocks.length > 0;
   const hasScore = topic.score != undefined;
   const [openPopup, setOpenPopup] = useState(hasBlocks && !hasScore);
+  const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { values, errors, setFieldValue, setFieldTouched, handleSubmit } =
     useRequiredForm({
       Score: topic.score ? `${topic.score}` : "",
@@ -110,7 +114,13 @@ const DroppedTopic = ({
                 )}
                 <Popup
                   content={`Delete ${topic.name}`}
-                  trigger={<Button icon="trash" size="mini" />}
+                  trigger={
+                    <Button
+                      icon="trash"
+                      size="mini"
+                      onClick={() => setDeleteConfirmOpen(true)}
+                    />
+                  }
                 />
               </div>
             </Message>
@@ -118,9 +128,13 @@ const DroppedTopic = ({
             <Segment attached>
               {hasBlocks ? (
                 topic.score != undefined ? (
-                  blocks[topic.score][gender || "maleContent"].replaceAll(
-                    "*",
-                    name || "*"
+                  name ? (
+                    blocks[topic.score][gender || "maleContent"].replaceAll(
+                      "*",
+                      name
+                    )
+                  ) : (
+                    blocks[topic.score][gender || "maleContent"]
                   )
                 ) : (
                   <>
@@ -194,6 +208,23 @@ const DroppedTopic = ({
           </Button>
         </Modal.Actions>
       </Modal>
+
+      <Confirm
+        dimmer="blurring"
+        open={isDeleteConfirmOpen}
+        content={`Are you sure you want to delete  ${topic.name}?`}
+        cancelButton={
+          <Button color="red" onClick={() => setDeleteConfirmOpen(false)}>
+            No
+          </Button>
+        }
+        confirmButton={
+          <Button color="green" onClick={onTopicDelete}>
+            Yes
+          </Button>
+        }
+        onCancel={() => setDeleteConfirmOpen(false)}
+      />
     </>
   );
 };

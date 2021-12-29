@@ -8,6 +8,7 @@ import {
   Dimmer,
   Loader,
   Placeholder,
+  Icon,
 } from "semantic-ui-react";
 import {
   DragDropContext,
@@ -26,8 +27,8 @@ import { useTopicsCollection } from "~/resources/useTopicsCollection";
 import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
 import { useBlocksCollection } from "~resources/useBlocksCollection";
 
-import { Decorator, Block } from "~/types";
-import { GeneratorTopic } from "./types";
+import { Block } from "~/types";
+import { GeneratorDecorator, GeneratorTopic } from "./types";
 
 const genderOptions = [
   {
@@ -41,7 +42,7 @@ const genderOptions = [
 ];
 
 function isTopic(
-  droppedTopic: Decorator | GeneratorTopic
+  droppedTopic: GeneratorDecorator | GeneratorTopic
 ): droppedTopic is GeneratorTopic {
   return (droppedTopic as GeneratorTopic).name !== undefined;
 }
@@ -53,7 +54,7 @@ const Generator = () => {
       Gender: "",
     });
   const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection();
-  const [decorators, setDecorators] = useState<Decorator[]>([]);
+  const [decorators, setDecorators] = useState<GeneratorDecorator[]>([]);
   const [hasDecorators, setHasDecorators] = useState(false);
 
   const [topicsRef, isTopicsLoading] = useTopicsCollection();
@@ -64,16 +65,16 @@ const Generator = () => {
   const [blocks, setBlocks] = useState<{ [id: string]: Block[] }>({});
 
   const [droppedTopics, setDroppedTopics] = useState<
-    Array<Decorator | GeneratorTopic>
+    Array<GeneratorDecorator | GeneratorTopic>
   >([]);
 
   useEffect(() => {
-    const decorators: Decorator[] = [];
+    const decorators: GeneratorDecorator[] = [];
     decoratorsRef?.forEach((document) =>
       decorators.push({
         id: document.id,
         ...document.data(),
-      } as Decorator)
+      } as GeneratorDecorator)
     );
 
     if (decorators.length > 0) setHasDecorators(true);
@@ -109,7 +110,7 @@ const Generator = () => {
   }, [blocksRef]);
 
   function handleDropped({ source, destination }: DropResult) {
-    let droppedItem: Decorator | GeneratorTopic;
+    let droppedItem: GeneratorDecorator | GeneratorTopic;
     if (source.droppableId === (destination as DraggableLocation).droppableId) {
       // Reorder
       [droppedItem] = droppedTopics.splice(source.index, 1);
@@ -120,6 +121,7 @@ const Generator = () => {
         source.droppableId === "availableDecorators"
           ? decorators.splice(source.index, 1)
           : topics.splice(source.index, 1);
+      droppedItem.sourceIndex = source.index;
     }
 
     droppedTopics.splice(
@@ -143,7 +145,25 @@ const Generator = () => {
     const topic = droppedTopics[index];
     (topic as GeneratorTopic).score = score;
 
-    setDroppedTopics(droppedTopics);
+    setDroppedTopics([...droppedTopics]);
+  }
+
+  function onDecoratorDelete(index: number) {
+    const [decorator] = droppedTopics.splice(index, 1);
+    decorators.splice(
+      decorator.sourceIndex as number,
+      0,
+      decorator as GeneratorDecorator
+    );
+
+    setDecorators([...decorators]);
+  }
+
+  function onTopicDelete(index: number) {
+    const [topic] = droppedTopics.splice(index, 1);
+    topics.splice(topic.sourceIndex as number, 0, topic as GeneratorTopic);
+
+    setTopics([...topics]);
   }
 
   return (
@@ -152,6 +172,7 @@ const Generator = () => {
         padding: 24px;
       `}
     >
+      {/* Name and gender */}
       <Segment>
         <Header as="h2">Generate qomment</Header>
         <Header as="h3">Choose name and gender to proceed</Header>
@@ -179,8 +200,10 @@ const Generator = () => {
           </Form.Group>
         </Form>
       </Segment>
+      {/* End of Name and gender */}
 
       <DragDropContext onDragEnd={onDropEnd}>
+        {/* Decorators Section */}
         <Segment>
           <Header as="h3">Decorators</Header>
           <Segment>
@@ -245,7 +268,9 @@ const Generator = () => {
             )}
           </Segment>
         </Segment>
+        {/* End of Decorators section */}
 
+        {/* Topics Section */}
         <Segment>
           <Header as="h3">Topics</Header>
           <Segment>
@@ -307,7 +332,9 @@ const Generator = () => {
             )}
           </Segment>
         </Segment>
+        {/* End of Topics section */}
 
+        {/* Dropped Items */}
         <Segment>
           <Segment>
             <Droppable droppableId="droppedTopics">
@@ -326,6 +353,22 @@ const Generator = () => {
                     transition: background-color 0.2s;
                   `}
                 >
+                  {droppedTopics.length === 0 && (
+                    <div
+                      className={css`
+                        text-align: center;
+                        opacity: ${snapshot.isDraggingOver ? 0 : 1};
+                        transition: opacity 0.15s;
+                      `}
+                    >
+                      <Header size="small">
+                        Drag Decorator or Topic and drop here to start
+                        generating your feedback
+                      </Header>
+                      <Icon name="inbox" size="huge" />
+                    </div>
+                  )}
+
                   {droppedTopics.map((droppedTopic, index) => {
                     const isDroppedTopic = isTopic(droppedTopic);
 
@@ -336,6 +379,7 @@ const Generator = () => {
                           topic={droppedTopic}
                           blocks={blocks[droppedTopic.id] || []}
                           onTopicScoreChange={onTopicScoreChange}
+                          onTopicDelete={() => onTopicDelete(index)}
                           index={index}
                           name={values.Name}
                           gender={
@@ -348,6 +392,7 @@ const Generator = () => {
                         <DroppedDecorator
                           key={droppedTopic.id}
                           decorator={droppedTopic}
+                          onDecoratorDelete={() => onDecoratorDelete(index)}
                           index={index}
                           name={values.Name}
                         />
@@ -360,6 +405,7 @@ const Generator = () => {
             </Droppable>
           </Segment>
         </Segment>
+        {/* End of Dropped Items */}
       </DragDropContext>
     </Container>
   );

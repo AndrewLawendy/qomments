@@ -1,5 +1,14 @@
+import { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
-import { Segment, Message, Icon, Header, Button } from "semantic-ui-react";
+import {
+  Segment,
+  Message,
+  Icon,
+  Header,
+  Popup,
+  Button,
+  Confirm,
+} from "semantic-ui-react";
 import { css } from "@emotion/css";
 
 import { Decorator } from "~/types";
@@ -7,51 +16,84 @@ import { startCase } from "~/utils";
 
 type DroppedDecoratorProps = {
   decorator: Decorator;
+  onDecoratorDelete: () => void;
   index: number;
   name: string;
 };
 
 const DroppedDecorator = ({
   decorator,
+  onDecoratorDelete,
   index,
   name,
 }: DroppedDecoratorProps) => {
+  const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const title = startCase(decorator.type);
+
   return (
-    <Draggable draggableId={`dropped-${decorator.id}`} index={index}>
-      {(provided) => (
-        <div ref={provided.innerRef} {...provided.draggableProps}>
-          <Message
-            attached
-            className={css`
-              display: flex;
-              justify-content: space-between;
-            `}
-          >
-            <div
+    <>
+      <Draggable draggableId={`dropped-${decorator.id}`} index={index}>
+        {(provided) => (
+          <div ref={provided.innerRef} {...provided.draggableProps}>
+            <Message
+              attached
               className={css`
                 display: flex;
-                align-items: center;
+                justify-content: space-between;
               `}
             >
-              <Icon
-                name="bars"
+              <div
                 className={css`
-                  cursor: move;
+                  display: flex;
+                  align-items: center;
                 `}
-                {...provided.dragHandleProps}
+              >
+                <Icon
+                  name="bars"
+                  className={css`
+                    cursor: move;
+                  `}
+                  {...provided.dragHandleProps}
+                />
+
+                <Header size="tiny">{title}</Header>
+              </div>
+
+              <Popup
+                content={`Delete ${title}`}
+                trigger={
+                  <Button
+                    icon="trash"
+                    size="mini"
+                    onClick={() => setDeleteConfirmOpen(true)}
+                  />
+                }
               />
+            </Message>
+            <Segment attached>
+              {name ? decorator.body.replaceAll("*", name) : decorator.body}
+            </Segment>
+          </div>
+        )}
+      </Draggable>
 
-              <Header size="tiny">{startCase(decorator.type)}</Header>
-            </div>
-
-            <Button icon="trash" size="mini" />
-          </Message>
-          <Segment attached>
-            {decorator.body.replaceAll("*", name || "*")}
-          </Segment>
-        </div>
-      )}
-    </Draggable>
+      <Confirm
+        dimmer="blurring"
+        open={isDeleteConfirmOpen}
+        content={`Are you sure you want to delete  ${title}?`}
+        cancelButton={
+          <Button color="red" onClick={() => setDeleteConfirmOpen(false)}>
+            No
+          </Button>
+        }
+        confirmButton={
+          <Button color="green" onClick={onDecoratorDelete}>
+            Yes
+          </Button>
+        }
+        onCancel={() => setDeleteConfirmOpen(false)}
+      />
+    </>
   );
 };
 
