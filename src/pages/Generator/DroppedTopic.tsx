@@ -36,7 +36,9 @@ const DroppedTopic = ({
   name,
   gender,
 }: DroppedTopicProps) => {
-  const [openPopup, setOpenPopup] = useState(topic.score == undefined);
+  const hasBlocks = blocks.length > 0;
+  const hasScore = topic.score != undefined;
+  const [openPopup, setOpenPopup] = useState(hasBlocks && !hasScore);
   const {
     values,
     errors,
@@ -47,7 +49,6 @@ const DroppedTopic = ({
   } = useRequiredForm({
     Score: topic.score ? `${topic.score}` : "",
   });
-  const hasBlocks = blocks.length > 0;
   const scoreOptions = blocks.reduce<{ text: string; value: string }[]>(
     (options, _, index) => {
       options.push({
@@ -126,9 +127,8 @@ const DroppedTopic = ({
                 >
                   <Header as="h3">No blocks available</Header>
                   <p>
-                    Go to{" "}
-                    <Link to={`my-space/${topic.id}`}>My Space/{topic.id}</Link>{" "}
-                    to start adding topics
+                    Go to <Link to={`my-space/${topic.id}`}>My Space</Link> to
+                    start adding topics
                   </p>
                 </div>
               )}
@@ -140,8 +140,8 @@ const DroppedTopic = ({
       <Modal
         dimmer="blurring"
         open={openPopup}
-        closeOnDimmerClick={topic.score != undefined}
-        closeOnEscape={topic.score != undefined}
+        closeOnDimmerClick={hasScore}
+        closeOnEscape={hasScore}
         onClose={() => {
           setOpenPopup(false);
           destroyForm();
@@ -165,7 +165,7 @@ const DroppedTopic = ({
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          {topic.score != undefined && (
+          {hasScore && (
             <Button
               negative
               onClick={() => {
