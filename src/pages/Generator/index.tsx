@@ -54,9 +54,11 @@ const Generator = () => {
     });
   const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection();
   const [decorators, setDecorators] = useState<Decorator[]>([]);
+  const [hasDecorators, setHasDecorators] = useState(false);
 
   const [topicsRef, isTopicsLoading] = useTopicsCollection();
   const [topics, setTopics] = useState<GeneratorTopic[]>([]);
+  const [hasTopics, setHasTopics] = useState(false);
 
   const [blocksRef, isBlocksLoading] = useBlocksCollection();
   const [blocks, setBlocks] = useState<{ [id: string]: Block[] }>({});
@@ -74,19 +76,21 @@ const Generator = () => {
       } as Decorator)
     );
 
+    if (decorators.length > 0) setHasDecorators(true);
     setDecorators(decorators);
   }, [decoratorsRef]);
 
   useEffect(() => {
-    const topicsValues: GeneratorTopic[] = [];
+    const topics: GeneratorTopic[] = [];
     topicsRef?.forEach((document) => {
-      topicsValues.push({
+      topics.push({
         id: document.id,
         ...document.data(),
       } as GeneratorTopic);
     });
 
-    setTopics(topicsValues);
+    if (topics.length > 0) setHasTopics(true);
+    setTopics(topics);
   }, [topicsRef]);
 
   useEffect(() => {
@@ -203,10 +207,14 @@ const Generator = () => {
                 `}
               >
                 <Header as="h3">No decorators available</Header>
-                <p>
-                  Go to <Link to="my-space">My Space</Link> to start adding
-                  topics
-                </p>
+                {hasDecorators ? (
+                  <p>All decorators are used</p>
+                ) : (
+                  <p>
+                    Go to <Link to="my-space">My Space</Link> to start adding
+                    topics
+                  </p>
+                )}
               </div>
             ) : (
               <Droppable
@@ -264,10 +272,14 @@ const Generator = () => {
                 `}
               >
                 <Header as="h3">No topics available</Header>
-                <p>
-                  Go to <Link to="my-space">My Space</Link> to start adding
-                  topics
-                </p>
+                {hasTopics ? (
+                  <p>All topics are used</p>
+                ) : (
+                  <p>
+                    Go to <Link to="my-space">My Space</Link> to start adding
+                    topics
+                  </p>
+                )}
               </div>
             ) : (
               <Droppable droppableId="availableTopics" direction="horizontal">
