@@ -128,14 +128,14 @@ const DroppedTopic = ({
             <Segment attached>
               {hasBlocks ? (
                 topic.score != undefined ? (
-                  name ? (
-                    blocks[topic.score][gender || "maleContent"].replaceAll(
-                      "*",
-                      name
-                    )
-                  ) : (
-                    blocks[topic.score][gender || "maleContent"]
-                  )
+                  <span className="topic-content">
+                    {name
+                      ? blocks[topic.score][gender || "maleContent"].replaceAll(
+                          "*",
+                          name
+                        )
+                      : blocks[topic.score][gender || "maleContent"]}
+                  </span>
                 ) : (
                   <>
                     <Dimmer active inverted />

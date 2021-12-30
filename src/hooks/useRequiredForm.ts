@@ -42,8 +42,9 @@ const useRequiredForm = (initialFormValue: Values) => {
   }
 
   function handleSubmit(cb: (values: Values) => void) {
-    const isFormValid = validateForm(true);
+    touchForm();
 
+    const isFormValid = validateForm();
     if (isFormValid) cb(values);
   }
 
@@ -55,21 +56,25 @@ const useRequiredForm = (initialFormValue: Values) => {
     setTouched({ ...touched, [name]: true });
   }
 
-  function validateForm(onSubmit = false) {
+  function touchForm() {
+    for (const name in values) {
+      touched[name] = true;
+    }
+
+    setTouched({ ...touched });
+  }
+
+  function validateForm() {
     const validationErrors = { ...errors };
     let isFormValid = true;
 
     for (const name in values) {
-      if (!values[name] && (touched[name] || onSubmit)) {
+      if (!values[name] && touched[name]) {
         isFormValid = false;
         validationErrors[name] = {
           content: `${name} is a required field`,
           pointing: "above",
         };
-
-        if (onSubmit) {
-          setTouched({ ...touched, [name]: true });
-        }
       } else {
         validationErrors[name] = null;
       }

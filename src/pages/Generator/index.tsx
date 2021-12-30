@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
+import copy from "copy-to-clipboard";
 import {
   Segment,
   Header,
@@ -8,6 +9,9 @@ import {
   Loader,
   Placeholder,
   Icon,
+  Button,
+  Message,
+  List,
 } from "semantic-ui-react";
 import {
   DragDropContext,
@@ -47,11 +51,20 @@ function isTopic(
 }
 
 const Generator = () => {
-  const { values, errors, onChange, onBlur, setFieldValue, setFieldTouched } =
-    useRequiredForm({
-      Name: "",
-      Gender: "",
-    });
+  const {
+    values,
+    errors,
+    onChange,
+    onBlur,
+    setFieldValue,
+    setFieldTouched,
+    isValid,
+    handleSubmit,
+  } = useRequiredForm({
+    Name: "",
+    Gender: "",
+  });
+  const [isCopyButtonClick, setCopyButtonClick] = useState(false);
   const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection();
   const [decorators, setDecorators] = useState<GeneratorDecorator[]>([]);
   const [hasDecorators, setHasDecorators] = useState(false);
@@ -66,6 +79,7 @@ const Generator = () => {
   const [droppedTopics, setDroppedTopics] = useState<
     Array<GeneratorDecorator | GeneratorTopic>
   >([]);
+  const hasDroppedTopics = droppedTopics.length > 0;
 
   useEffect(() => {
     const decorators: GeneratorDecorator[] = [];
@@ -163,6 +177,22 @@ const Generator = () => {
     topics.splice(topic.sourceIndex as number, 0, topic as GeneratorTopic);
 
     setTopics([...topics]);
+  }
+
+  function copyContent() {
+    if (!isCopyButtonClick) setCopyButtonClick(true);
+
+    handleSubmit(() => {
+      if (!hasDroppedTopics) return;
+
+      const topicsContentElement = document.querySelectorAll(".topic-content");
+      const topicContent = [...topicsContentElement]
+        .map((element: Element) => element.textContent)
+        .join("\n");
+
+      copy(topicContent);
+      setCopyButtonClick(false);
+    });
   }
 
   return (
@@ -355,7 +385,7 @@ const Generator = () => {
                     transition: background-color 0.2s;
                   `}
                 >
-                  {droppedTopics.length === 0 && (
+                  {!hasDroppedTopics && (
                     <div
                       className={css`
                         text-align: center;
@@ -406,6 +436,50 @@ const Generator = () => {
               )}
             </Droppable>
           </Segment>
+
+          {isCopyButtonClick && (!isValid || !hasDroppedTopics) && (
+            <Message
+              attached="bottom"
+              warning
+              icon
+              className={css`
+                margin-top: -1.2rem !important;
+                margin-right: 0 !important;
+                margin-left: 0 !important;
+              `}
+            >
+              <Icon name="exclamation" />
+
+              <Message.Content>
+                <Message.Header>
+                  Can not copy for the following reasons
+                </Message.Header>
+
+                <List>
+                  {!isValid && (
+                    <List.Item
+                      icon="angle right"
+                      content="No name and gender"
+                    />
+                  )}
+                  {!hasDroppedTopics && (
+                    <List.Item icon="angle right" content="No dropped topic" />
+                  )}
+                </List>
+              </Message.Content>
+            </Message>
+          )}
+
+          <Button
+            color="yellow"
+            className={css`
+              display: block !important;
+              margin: 0 auto !important;
+            `}
+            onClick={copyContent}
+          >
+            Copy qomment
+          </Button>
         </Segment>
         {/* End of Dropped Items */}
       </DragDropContext>

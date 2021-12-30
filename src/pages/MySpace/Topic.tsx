@@ -146,6 +146,7 @@ const Topic = ({ topic }: TopicProps) => {
         <Message
           attached="bottom"
           warning
+          icon
           className={css`
             margin-top: -1.2rem !important;
             margin-right: 0 !important;

@@ -70,7 +70,7 @@ const DroppedDecorator = ({
                 }
               />
             </Message>
-            <Segment attached>
+            <Segment attached className="topic-content">
               {name ? decorator.body.replaceAll("*", name) : decorator.body}
             </Segment>
           </div>
