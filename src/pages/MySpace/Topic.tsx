@@ -18,6 +18,7 @@ import { css } from "@emotion/css";
 import { useDeleteDocument } from "~/hooks/useCrud";
 import { useBlocksCollection } from "~resources/useBlocksCollection";
 
+import EditTopicName from "./EditTopicName";
 import Block from "./Block";
 
 import { Topic, Block as BlockType } from "~/types";
@@ -79,18 +80,21 @@ const Topic = ({ topic }: TopicProps) => {
         `}
       >
         <Header size="huge">{topic.name}</Header>
-        <Popup
-          content={`Delete ${topic.name}`}
-          trigger={
-            <Button
-              circular
-              color="red"
-              icon="trash"
-              onClick={() => setDeleteConfirmOpen(true)}
-              disabled={isBlocksLoading || isDeleteTopicLoading}
-            />
-          }
-        />
+        <div>
+          <EditTopicName topic={topic} />
+          <Popup
+            content={`Delete ${topic.name}`}
+            trigger={
+              <Button
+                circular
+                color="red"
+                icon="trash"
+                onClick={() => setDeleteConfirmOpen(true)}
+                disabled={isBlocksLoading || isDeleteTopicLoading}
+              />
+            }
+          />
+        </div>
       </div>
 
       {blocks.length == 0 && (
