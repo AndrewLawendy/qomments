@@ -45,7 +45,7 @@ const Block = ({
     "Male Content": block?.maleContent || "",
     "Female Content": block?.femaleContent || "",
   });
-  const score = block?.score || index + 1;
+  const score = block?.score != undefined ? block.score : index + 1;
 
   function handleDelete() {
     if (block?.id) {
@@ -116,7 +116,7 @@ const Block = ({
                           addBlock({
                             maleContent,
                             femaleContent,
-                            score: index,
+                            score,
                             topic: topicId,
                           }).then(() =>
                             toast.success(
