@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { toast } from "react-toastify";
 import { css } from "@emotion/css";
 import { Icon, Modal, Button, Form, Input } from "semantic-ui-react";
 
@@ -20,6 +21,7 @@ const AddTopic = () => {
     handleSubmit(({ Topic }) => {
       addTopic({ name: Topic }).then(({ id }) => {
         setLocation(`/${id}`);
+        toast.success(`Topic ${Topic} is added successfully`);
       });
       setModalOpen(false);
       destroyForm();

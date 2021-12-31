@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { css } from "@emotion/css";
+import { toast } from "react-toastify";
 import { where } from "firebase/firestore";
 import {
   Segment,
@@ -12,6 +12,7 @@ import {
   Icon,
   Confirm,
 } from "semantic-ui-react";
+import { css } from "@emotion/css";
 
 import { Decorator } from "~/types";
 
@@ -101,7 +102,9 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
                         handleSubmit(({ [title]: body }) =>
                           updateDecorator(decorator.id, {
                             body,
-                          })
+                          }).then(() =>
+                            toast.success(`${title} is updated successfully`)
+                          )
                         )
                       }
                       disabled={isUpdateDecoratorLoading}
@@ -116,7 +119,9 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
                           addDecorator({
                             body,
                             type,
-                          })
+                          }).then(() =>
+                            toast.success(`${title} is added successfully`)
+                          )
                         )
                       }
                       disabled={isAddDecoratorLoading}
@@ -187,7 +192,9 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
             color="green"
             onClick={() => {
               if (decorator?.id) {
-                deleteDecorator(decorator.id);
+                deleteDecorator(decorator.id).then(() =>
+                  toast.success(`${title} is deleted successfully`)
+                );
                 setDeleteConfirmOpen(false);
                 destroyForm();
               }

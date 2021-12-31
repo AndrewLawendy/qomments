@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import copy from "copy-to-clipboard";
+import { toast } from "react-toastify";
 import {
   Segment,
   Header,
@@ -80,6 +81,7 @@ const Generator = () => {
     Array<GeneratorDecorator | GeneratorTopic>
   >([]);
   const hasDroppedTopics = droppedTopics.length > 0;
+  const [hasContent, setHasContent] = useState(false);
 
   useEffect(() => {
     const decorators: GeneratorDecorator[] = [];
@@ -122,6 +124,11 @@ const Generator = () => {
     setBlocks(blocksValues);
   }, [blocksRef]);
 
+  useEffect(() => {
+    const topicContentElements = document.querySelectorAll(".topic-content");
+    setHasContent(topicContentElements.length > 0);
+  }, [droppedTopics]);
+
   function handleDropped({ source, destination }: DropResult) {
     let droppedItem: GeneratorDecorator | GeneratorTopic;
     if (source.droppableId === (destination as DraggableLocation).droppableId) {
@@ -130,10 +137,15 @@ const Generator = () => {
     } else {
       // Drop
 
-      [droppedItem] =
-        source.droppableId === "availableDecorators"
-          ? decorators.splice(source.index, 1)
-          : topics.splice(source.index, 1);
+      if (source.droppableId === "availableDecorators") {
+        [droppedItem] = decorators.splice(source.index, 1);
+
+        setDecorators([...decorators]);
+      } else {
+        [droppedItem] = topics.splice(source.index, 1);
+
+        setTopics([...topics]);
+      }
       droppedItem.sourceIndex = source.index;
     }
 
@@ -169,6 +181,7 @@ const Generator = () => {
       decorator as GeneratorDecorator
     );
 
+    setDroppedTopics([...droppedTopics]);
     setDecorators([...decorators]);
   }
 
@@ -176,6 +189,7 @@ const Generator = () => {
     const [topic] = droppedTopics.splice(index, 1);
     topics.splice(topic.sourceIndex as number, 0, topic as GeneratorTopic);
 
+    setDroppedTopics([...droppedTopics]);
     setTopics([...topics]);
   }
 
@@ -183,15 +197,15 @@ const Generator = () => {
     if (!isCopyButtonClick) setCopyButtonClick(true);
 
     handleSubmit(() => {
-      if (!hasDroppedTopics) return;
+      if (!hasDroppedTopics || !hasContent) return;
 
-      const topicsContentElement = document.querySelectorAll(".topic-content");
-      const topicContent = [...topicsContentElement]
+      const topicContentElements = document.querySelectorAll(".topic-content");
+      const topicsContent = [...topicContentElements]
         .map((element: Element) => element.textContent)
         .join("\n");
 
-      copy(topicContent);
-      setCopyButtonClick(false);
+      copy(topicsContent);
+      toast.success("qomment is copied successfully");
     });
   }
 
@@ -437,7 +451,7 @@ const Generator = () => {
             </Droppable>
           </Segment>
 
-          {isCopyButtonClick && (!isValid || !hasDroppedTopics) && (
+          {isCopyButtonClick && (!isValid || !hasDroppedTopics || !hasContent) && (
             <Message
               attached="bottom"
               warning
@@ -464,6 +478,9 @@ const Generator = () => {
                   )}
                   {!hasDroppedTopics && (
                     <List.Item icon="angle right" content="No dropped topic" />
+                  )}
+                  {!hasContent && (
+                    <List.Item icon="angle right" content="No content" />
                   )}
                 </List>
               </Message.Content>

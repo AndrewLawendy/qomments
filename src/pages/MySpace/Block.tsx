@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import {
   Segment,
   Header,
@@ -44,7 +45,7 @@ const Block = ({
     "Male Content": block?.maleContent || "",
     "Female Content": block?.femaleContent || "",
   });
-  const score = block?.score || index + 1;
+  const score = block?.score != undefined ? block.score : index + 1;
 
   function handleDelete() {
     if (block?.id) {
@@ -92,7 +93,11 @@ const Block = ({
                           updateBlock(block.id, {
                             maleContent,
                             femaleContent,
-                          })
+                          }).then(() =>
+                            toast.success(
+                              `Score ${score} is updated successfully`
+                            )
+                          )
                       )
                     }
                     disabled={isUpdateBlockLoading}
@@ -111,9 +116,13 @@ const Block = ({
                           addBlock({
                             maleContent,
                             femaleContent,
-                            score: index,
+                            score,
                             topic: topicId,
-                          })
+                          }).then(() =>
+                            toast.success(
+                              `Score ${score} is added successfully`
+                            )
+                          )
                       )
                     }
                     disabled={isAddBlockLoading}
@@ -197,7 +206,12 @@ const Block = ({
         confirmButton={
           <Button
             color="green"
-            onClick={() => block?.id && deleteBlock(block.id)}
+            onClick={() =>
+              block?.id &&
+              deleteBlock(block.id).then(() =>
+                toast.success(`Score ${score} is deleted successfully`)
+              )
+            }
           >
             Yes
           </Button>
