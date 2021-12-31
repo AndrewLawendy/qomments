@@ -1,6 +1,6 @@
 import { useState, useEffect, ChangeEvent, FocusEvent } from "react";
 
-type Values = {
+export type Values = {
   [key: string]: string;
 };
 
