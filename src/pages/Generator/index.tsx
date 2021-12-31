@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import copy from "copy-to-clipboard";
+import { toast } from "react-toastify";
 import {
   Segment,
   Header,
@@ -192,6 +193,7 @@ const Generator = () => {
 
       copy(topicContent);
       setCopyButtonClick(false);
+      toast.success("qomment is copied successfully");
     });
   }
 

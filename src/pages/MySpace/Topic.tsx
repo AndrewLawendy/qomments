@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { css } from "@emotion/css";
+import { toast } from "react-toastify";
 import { where } from "firebase/firestore";
 import {
   Header,
@@ -13,6 +13,7 @@ import {
   Icon,
   Confirm,
 } from "semantic-ui-react";
+import { css } from "@emotion/css";
 
 import { useDeleteDocument } from "~/hooks/useCrud";
 import { useBlocksCollection } from "~resources/useBlocksCollection";
@@ -184,7 +185,9 @@ const Topic = ({ topic }: TopicProps) => {
             onClick={() => {
               if (topic?.id) {
                 setDeleteConfirmOpen(false);
-                deleteTopic(topic.id);
+                deleteTopic(topic.id).then(() =>
+                  toast.success(`Topic ${topic.name} is updated successfully`)
+                );
                 blocks.forEach((block) => block && deleteBlock(block.id));
                 setLocation("/introduction");
               }
