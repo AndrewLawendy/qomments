@@ -38,6 +38,7 @@ const Topic = ({ topic }: TopicProps) => {
   const [deleteTopic, isDeleteTopicLoading] = useDeleteDocument("topics");
   const [deleteBlock] = useDeleteDocument("blocks");
   const [isAddTopicValidated, setAddTopicValidated] = useState(false);
+  const isTopicEmpty = blocks.length === 0;
 
   useEffect(() => {
     const blocksValues: BlockType[] = [];
@@ -54,7 +55,7 @@ const Topic = ({ topic }: TopicProps) => {
 
   function addNewBlock() {
     setAddTopicValidated(true);
-    const canAdd = isLastBlockConfirmed();
+    const canAdd = isTopicEmpty || isLastBlockConfirmed();
     if (canAdd) {
       setBlocks([...blocks, {}]);
       setAddTopicValidated(false);
@@ -148,7 +149,7 @@ const Topic = ({ topic }: TopicProps) => {
         />
       ))}
 
-      {isAddTopicValidated && !isLastBlockConfirmed() && (
+      {isAddTopicValidated && !isTopicEmpty && !isLastBlockConfirmed() && (
         <Message
           attached="bottom"
           warning
