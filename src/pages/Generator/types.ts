@@ -1,10 +1,20 @@
-import { Topic, Decorator } from "~/types";
+import { Decorator, Topic, Block } from "~/types";
 
 export interface GeneratorTopic extends Topic {
-  score?: number;
+  level?: string;
   sourceIndex?: number;
 }
 
 export interface GeneratorDecorator extends Decorator {
   sourceIndex?: number;
+}
+
+export interface BlocksValues {
+  [topicId: string]: BlockValues;
+}
+
+export interface BlockValues {
+  levels: string[];
+  blocks: { [blockLevel: string]: Block };
+  length: number;
 }

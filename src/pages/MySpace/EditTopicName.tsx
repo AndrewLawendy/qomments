@@ -32,7 +32,7 @@ const EditTopicName = ({ topic }: EditTopicNameProps) => {
   return (
     <>
       <Popup
-        content={`Edit ${topic.name} Name`}
+        content={`Edit Topic Name`}
         trigger={
           <Button
             circular
@@ -53,7 +53,7 @@ const EditTopicName = ({ topic }: EditTopicNameProps) => {
         }}
         size="tiny"
       >
-        <Modal.Header>Choose {topic.name} score</Modal.Header>
+        <Modal.Header>Edit Topic Name</Modal.Header>
         <Modal.Content>
           <Form>
             <Form.Input

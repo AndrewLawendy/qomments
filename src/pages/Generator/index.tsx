@@ -32,7 +32,7 @@ import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
 import { useBlocksCollection } from "~resources/useBlocksCollection";
 
 import { Block } from "~/types";
-import { GeneratorDecorator, GeneratorTopic } from "./types";
+import { GeneratorDecorator, GeneratorTopic, BlocksValues } from "./types";
 
 const genderOptions = [
   {
@@ -82,7 +82,7 @@ const Generator = () => {
   const [hasTopics, setHasTopics] = useState(false);
 
   const [blocksRef, isBlocksLoading] = useBlocksCollection();
-  const [blocks, setBlocks] = useState<{ [id: string]: Block[] }>({});
+  const [blocks, setBlocks] = useState<BlocksValues>({});
 
   const [droppedTopics, setDroppedTopics] = useState<
     Array<GeneratorDecorator | GeneratorTopic>
@@ -117,15 +117,20 @@ const Generator = () => {
   }, [topicsRef]);
 
   useEffect(() => {
-    const blocksValues: { [id: string]: Block[] } = {};
+    const blocksValues: BlocksValues = {};
     blocksRef?.forEach((document) => {
       const block: Block = {
         id: document.id,
         ...(document.data() as Omit<Block, "id">),
       };
 
-      if (!blocksValues[block.topic]) blocksValues[block.topic] = [];
-      blocksValues[block.topic].push(block);
+      if (!blocksValues[block.topic]) {
+        blocksValues[block.topic] = { levels: [], blocks: {}, length: 0 };
+      }
+
+      blocksValues[block.topic].levels.push(block.score);
+      blocksValues[block.topic].blocks[block.score] = block;
+      blocksValues[block.topic].length++;
     });
 
     setBlocks(blocksValues);
@@ -195,9 +200,9 @@ const Generator = () => {
     }
   }
 
-  function onTopicScoreChange(index: number, score: number) {
+  function onTopicLevelChange(index: number, level: string) {
     const topic = droppedTopics[index];
-    (topic as GeneratorTopic).score = score;
+    (topic as GeneratorTopic).level = level;
 
     setDroppedTopics([...droppedTopics]);
   }
@@ -452,8 +457,14 @@ const Generator = () => {
                         <DroppedTopic
                           key={droppedTopic.id}
                           topic={droppedTopic}
-                          blocks={blocks[droppedTopic.id] || []}
-                          onTopicScoreChange={onTopicScoreChange}
+                          blockValues={
+                            blocks[droppedTopic.id] || {
+                              levels: [],
+                              blocks: {},
+                              length: 0,
+                            }
+                          }
+                          onTopicLevelChange={onTopicLevelChange}
                           onTopicDelete={() => onTopicDelete(index)}
                           index={index}
                           name={values.Name}
