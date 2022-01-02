@@ -36,7 +36,7 @@ const EditBlockLevelName = ({ block, level, setLevel }: EditBlockNameProps) => {
     reInitializeForm({ "Level Name": level });
 
     if (block.id) {
-      updateBlock(block.id, { score: level }).then(() => {
+      updateBlock(block.id, { level }).then(() => {
         toast.success(`Level Name is updated successfully to ${level}`);
       });
     } else {

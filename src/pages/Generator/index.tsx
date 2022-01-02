@@ -128,8 +128,8 @@ const Generator = () => {
         blocksValues[block.topic] = { levels: [], blocks: {}, length: 0 };
       }
 
-      blocksValues[block.topic].levels.push(block.score);
-      blocksValues[block.topic].blocks[block.score] = block;
+      blocksValues[block.topic].levels.push(block.level);
+      blocksValues[block.topic].blocks[block.level] = block;
       blocksValues[block.topic].length++;
     });
 

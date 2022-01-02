@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import {
   Segment,
@@ -40,7 +40,7 @@ const Block = ({
   deleteLastBlock,
 }: BlockProps) => {
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [level, setLevel] = useState(block.score || `Level ${index + 1}`);
+  const [level, setLevel] = useState(block.level || `Level ${index + 1}`);
   const [addBlock, isAddBlockLoading] = useAddDocument<Block>("blocks");
   const [updateBlock, isUpdateBlockLoading] =
     useUpdateDocument<Block>("blocks");
@@ -49,6 +49,12 @@ const Block = ({
     "Male Content": block.maleContent || "",
     "Female Content": block.femaleContent || "",
   });
+
+  useEffect(() => {
+    if (block.level) {
+      setLevel(block.level);
+    }
+  }, [block.level]);
 
   function handleDelete() {
     if (block.id) {
@@ -122,7 +128,7 @@ const Block = ({
                           addBlock({
                             maleContent,
                             femaleContent,
-                            score: level,
+                            level: level,
                             topic: topicId,
                           }).then(() =>
                             toast.success(`${level} is added successfully`)
