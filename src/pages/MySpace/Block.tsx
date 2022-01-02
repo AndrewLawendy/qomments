@@ -81,7 +81,7 @@ const Block = ({
           <div>
             {block.id ? (
               <Popup
-                content={`Update ${block.score}`}
+                content={`Update ${level}`}
                 trigger={
                   <Button
                     circular
@@ -97,9 +97,7 @@ const Block = ({
                             maleContent,
                             femaleContent,
                           }).then(() =>
-                            toast.success(
-                              `${block.score} is updated successfully`
-                            )
+                            toast.success(`${level} is updated successfully`)
                           )
                       )
                     }
@@ -109,7 +107,7 @@ const Block = ({
               />
             ) : (
               <Popup
-                content={`Add ${block.score}`}
+                content={`Add ${level}`}
                 trigger={
                   <Button
                     circular
@@ -127,9 +125,7 @@ const Block = ({
                             score: level,
                             topic: topicId,
                           }).then(() =>
-                            toast.success(
-                              `${block.score} is added successfully`
-                            )
+                            toast.success(`${level} is added successfully`)
                           )
                       )
                     }
@@ -210,7 +206,7 @@ const Block = ({
       <Confirm
         dimmer="blurring"
         open={isDeleteConfirmOpen}
-        content={`Are you sure you want to delete ${block.score}?`}
+        content={`Are you sure you want to delete ${level}?`}
         cancelButton={
           <Button color="red" onClick={() => setDeleteConfirmOpen(false)}>
             No
@@ -222,7 +218,7 @@ const Block = ({
             onClick={() =>
               block.id &&
               deleteBlock(block.id).then(() =>
-                toast.success(`${block.score} is deleted successfully`)
+                toast.success(`${level} is deleted successfully`)
               )
             }
           >

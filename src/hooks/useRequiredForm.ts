@@ -33,7 +33,7 @@ const useRequiredForm = (initialFormValue: Values) => {
   }
 
   function onBlur({ target: { name } }: FocusEvent<HTMLInputElement>) {
-    setTouched({ ...touched, [name]: true });
+    setFieldTouched(name);
   }
 
   function reInitializeForm(values: Values) {
@@ -58,7 +58,9 @@ const useRequiredForm = (initialFormValue: Values) => {
   }
 
   function setFieldTouched(name: string) {
-    setTouched({ ...touched, [name]: true });
+    if (!touched[name]) {
+      setTouched({ ...touched, [name]: true });
+    }
   }
 
   function touchForm() {
