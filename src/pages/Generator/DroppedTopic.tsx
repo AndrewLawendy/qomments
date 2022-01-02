@@ -85,7 +85,7 @@ const DroppedTopic = ({
                 />
 
                 <Header size="tiny">
-                  {topic.name} ({topic.level})
+                  {topic.name} {topic.level ? `(${topic.level})` : ""}
                 </Header>
               </div>
 
