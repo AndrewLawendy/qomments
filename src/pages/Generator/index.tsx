@@ -45,10 +45,17 @@ const genderOptions = [
   },
 ];
 
+let isListeningToBeforeUnload = false;
+
 function isTopic(
   droppedTopic: GeneratorDecorator | GeneratorTopic
 ): droppedTopic is GeneratorTopic {
   return (droppedTopic as GeneratorTopic).name !== undefined;
+}
+
+function onBeforeUnload(e: BeforeUnloadEvent) {
+  e.preventDefault();
+  e.returnValue = "";
 }
 
 const Generator = () => {
@@ -126,8 +133,30 @@ const Generator = () => {
 
   useEffect(() => {
     const topicContentElements = document.querySelectorAll(".topic-content");
-    setHasContent(topicContentElements.length > 0);
+    const hasTopicContentElements = topicContentElements.length > 0;
+
+    handleBeforeUnload(hasTopicContentElements);
+    setHasContent(hasTopicContentElements);
   }, [droppedTopics]);
+
+  useEffect(
+    () => () => window.removeEventListener("beforeunload", onBeforeUnload),
+    []
+  );
+
+  function handleBeforeUnload(hasTopicContentElements: boolean) {
+    if (hasTopicContentElements) {
+      if (!isListeningToBeforeUnload) {
+        window.addEventListener("beforeunload", onBeforeUnload);
+        isListeningToBeforeUnload = true;
+      }
+    } else {
+      if (isListeningToBeforeUnload) {
+        window.removeEventListener("beforeunload", onBeforeUnload);
+        isListeningToBeforeUnload = false;
+      }
+    }
+  }
 
   function handleDropped({ source, destination }: DropResult) {
     let droppedItem: GeneratorDecorator | GeneratorTopic;
@@ -202,7 +231,7 @@ const Generator = () => {
       const topicContentElements = document.querySelectorAll(".topic-content");
       const topicsContent = [...topicContentElements]
         .map((element: Element) => element.textContent)
-        .join("\n");
+        .join(" ");
 
       copy(topicsContent);
       toast.success("qomment is copied successfully");
