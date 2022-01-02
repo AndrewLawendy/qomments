@@ -8,7 +8,6 @@ import {
   Header,
   Popup,
   Button,
-  Dimmer,
   Placeholder,
   Modal,
   Form,
@@ -86,8 +85,7 @@ const DroppedTopic = ({
                 />
 
                 <Header size="tiny">
-                  {topic.name}
-                  {topic.level}
+                  {topic.name} ({topic.level})
                 </Header>
               </div>
 
@@ -119,7 +117,7 @@ const DroppedTopic = ({
 
             <Segment attached>
               {hasBlocks ? (
-                topic.level != undefined ? (
+                topic.level ? (
                   <span className="topic-content">
                     {name
                       ? blockValues.blocks[topic.level][
@@ -130,16 +128,13 @@ const DroppedTopic = ({
                         ]}
                   </span>
                 ) : (
-                  <>
-                    <Dimmer active inverted />
-                    <Placeholder fluid>
-                      <Placeholder.Line />
-                      <Placeholder.Line />
-                      <Placeholder.Line />
-                      <Placeholder.Line />
-                      <Placeholder.Line />
-                    </Placeholder>
-                  </>
+                  <Placeholder fluid>
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                  </Placeholder>
                 )
               ) : (
                 <div
@@ -183,6 +178,28 @@ const DroppedTopic = ({
               }
               onBlur={() => setFieldTouched("Level")}
             />
+
+            <Header as="h4">Preview</Header>
+
+            <Segment>
+              {values.Level ? (
+                name ? (
+                  blockValues.blocks[values.Level][
+                    gender || "maleContent"
+                  ].replaceAll("*", name)
+                ) : (
+                  blockValues.blocks[values.Level][gender || "maleContent"]
+                )
+              ) : (
+                <Placeholder fluid>
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                </Placeholder>
+              )}
+            </Segment>
           </Form>
         </Modal.Content>
         <Modal.Actions>
