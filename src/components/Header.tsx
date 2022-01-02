@@ -46,6 +46,12 @@ const Header = () => {
             padding: 0;
             list-style-type: none;
             height: 100%;
+
+            &:hover {
+              li:not(:hover)::after {
+                bottom: -4px;
+              }
+            }
           `}
         >
           <NavLink href="/">Generator</NavLink>
