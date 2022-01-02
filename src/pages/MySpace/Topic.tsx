@@ -68,7 +68,7 @@ const Topic = ({ topic }: TopicProps) => {
 
   function isLastBlockConfirmed() {
     const lastBlock = blocks[blocks.length - 1];
-    return lastBlock !== null;
+    return Boolean(lastBlock.id);
   }
 
   return (
