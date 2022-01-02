@@ -22,6 +22,7 @@ import EditTopicName from "./EditTopicName";
 import Block from "./Block";
 
 import { Topic, Block as BlockType } from "~/types";
+import { TemporaryBlock } from "./types";
 
 type TopicProps = {
   topic: Topic;
@@ -33,7 +34,7 @@ const Topic = ({ topic }: TopicProps) => {
   const [blocksRef, isBlocksLoading] = useBlocksCollection(
     where("topic", "==", topic.id)
   );
-  const [blocks, setBlocks] = useState<Array<BlockType | null>>([]);
+  const [blocks, setBlocks] = useState<Array<BlockType | TemporaryBlock>>([]);
   const [deleteTopic, isDeleteTopicLoading] = useDeleteDocument("topics");
   const [deleteBlock] = useDeleteDocument("blocks");
   const [isAddTopicValidated, setAddTopicValidated] = useState(false);
@@ -55,7 +56,7 @@ const Topic = ({ topic }: TopicProps) => {
     setAddTopicValidated(true);
     const canAdd = isLastBlockConfirmed();
     if (canAdd) {
-      setBlocks([...blocks, null]);
+      setBlocks([...blocks, {}]);
       setAddTopicValidated(false);
     }
   }
@@ -192,7 +193,7 @@ const Topic = ({ topic }: TopicProps) => {
                 deleteTopic(topic.id).then(() =>
                   toast.success(`Topic ${topic.name} is updated successfully`)
                 );
-                blocks.forEach((block) => block && deleteBlock(block.id));
+                blocks.forEach((block) => block.id && deleteBlock(block.id));
                 setLocation("/introduction");
               }
             }}

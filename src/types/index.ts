@@ -15,7 +15,7 @@ export interface Decorator extends Common {
 export interface Block extends Common {
   maleContent: string;
   femaleContent: string;
-  score: number;
+  score: string;
   topic: string;
 }
 

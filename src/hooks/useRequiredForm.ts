@@ -16,6 +16,7 @@ type Error = {
 type Touched = { [key: string]: boolean };
 
 const useRequiredForm = (initialFormValue: Values) => {
+  const [initialValues, setInitialValues] = useState(initialFormValue);
   const [values, setValues] = useState(initialFormValue);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Touched>({});
@@ -35,8 +36,12 @@ const useRequiredForm = (initialFormValue: Values) => {
     setTouched({ ...touched, [name]: true });
   }
 
+  function reInitializeForm(values: Values) {
+    setInitialValues(values);
+  }
+
   function destroyForm() {
-    setValues(initialFormValue);
+    setValues(initialValues);
     setTouched({});
     setErrors({});
   }
@@ -93,6 +98,7 @@ const useRequiredForm = (initialFormValue: Values) => {
     setFieldValue,
     setFieldTouched,
     destroyForm,
+    reInitializeForm,
     isValid,
     handleSubmit,
   };

@@ -39,11 +39,14 @@ export const useAddDocument = <T>(
 export const useUpdateDocument = <T>(
   collectionName: string
 ): [
-  (documentId: string, data: Omit<T, keyof Common>) => Promise<void>,
+  (documentId: string, data: Partial<Omit<T, keyof Common>>) => Promise<void>,
   boolean
 ] => {
   const [isLoading, setLoading] = useState(false);
-  const updateDocument = (documentId: string, data: Omit<T, keyof Common>) => {
+  const updateDocument = (
+    documentId: string,
+    data: Partial<Omit<T, keyof Common>>
+  ) => {
     setLoading(true);
     const documentRef = doc(db, collectionName, documentId);
 
