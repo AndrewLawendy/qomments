@@ -4,7 +4,7 @@ export type Values = {
   [key: string]: string;
 };
 
-type Errors = {
+export type Errors = {
   [key: string]: Error | null;
 };
 

@@ -23,6 +23,7 @@ import { Block } from "~/types";
 import { TemporaryBlock } from "./types";
 
 import EditBlockLevelName from "./EditBlockLevelName";
+import BlockContent from "./BlockContent";
 
 type BlockProps = {
   block: Block | TemporaryBlock;
@@ -45,7 +46,7 @@ const Block = ({
   const [updateBlock, isUpdateBlockLoading] =
     useUpdateDocument<Block>("blocks");
   const [deleteBlock, isDeleteBlockLoading] = useDeleteDocument("blocks");
-  const { values, errors, onChange, onBlur, handleSubmit } = useRequiredForm({
+  const { handleSubmit, ...form } = useRequiredForm({
     "Male Content": block.maleContent || "",
     "Female Content": block.femaleContent || "",
   });
@@ -165,34 +166,10 @@ const Block = ({
           <Grid>
             <Grid.Row columns={2}>
               <Grid.Column>
-                <Form.TextArea
-                  className={css`
-                    textarea {
-                      resize: none !important;
-                    }
-                  `}
-                  label="Male Content"
-                  name="Male Content"
-                  value={values["Male Content"]}
-                  error={errors["Male Content"]}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                />
+                <BlockContent {...form} label="Male Content" />
               </Grid.Column>
               <Grid.Column>
-                <Form.TextArea
-                  className={css`
-                    textarea {
-                      resize: none !important;
-                    }
-                  `}
-                  label="Female Content"
-                  name="Female Content"
-                  value={values["Female Content"]}
-                  error={errors["Female Content"]}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                />
+                <BlockContent {...form} label="Female Content" />
               </Grid.Column>
             </Grid.Row>
           </Grid>
