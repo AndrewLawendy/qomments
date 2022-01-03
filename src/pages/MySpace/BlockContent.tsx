@@ -1,7 +1,10 @@
-import { ChangeEvent, FocusEvent } from "react";
+import { useState, useEffect, ChangeEvent, FocusEvent } from "react";
+import writeGood, { Problem } from "write-good";
 import readingTime from "reading-time";
-import { Form, Icon } from "semantic-ui-react";
+import { Form, Icon, Message, List } from "semantic-ui-react";
 import { css } from "@emotion/css";
+
+import useDebounce from "~hooks/useDebounce";
 
 import { Values, Errors } from "~hooks/useRequiredForm";
 
@@ -23,6 +26,14 @@ const BlockContent = ({
   label,
 }: BlockContentProps) => {
   const readingStats = readingTime(values[label]);
+  const debouncedValue = useDebounce(values[label]);
+  const [suggestions, setSuggestions] = useState<Problem[]>([]);
+
+  useEffect(() => {
+    const writeGoodSuggestions = writeGood(debouncedValue);
+
+    setSuggestions(writeGoodSuggestions);
+  }, [debouncedValue]);
 
   return (
     <>
@@ -49,6 +60,32 @@ const BlockContent = ({
         <span>{readingStats.text}</span> <Icon name="file word outline" />
         <span>{readingStats.words} word(s)</span>
       </div>
+
+      {suggestions.length > 0 && (
+        <Message
+          warning
+          icon
+          className={css`
+            display: flex !important;
+          `}
+        >
+          <Icon name="lightbulb outline" />
+
+          <Message.Content>
+            <Message.Header>Suggestions</Message.Header>
+
+            <List>
+              {suggestions.map(({ reason, index, offset }) => (
+                <List.Item
+                  key={`${index}-${offset}`}
+                  icon="caret right"
+                  content={`${reason} at column ${index} through ${offset} character(s)`}
+                />
+              ))}
+            </List>
+          </Message.Content>
+        </Message>
+      )}
     </>
   );
 };

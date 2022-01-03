@@ -24,7 +24,8 @@
     "reading-time": "^1.5.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.3",
-    "wouter": "^2.8.0-alpha.2"
+    "wouter": "^2.8.0-alpha.2",
+    "write-good": "^1.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -36,6 +37,7 @@
     "@types/react": "^17.0.0",
     "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-dom": "^17.0.0",
+    "@types/write-good": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
     "babel-eslint": "^10.1.0",
