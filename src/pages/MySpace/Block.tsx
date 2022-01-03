@@ -163,15 +163,13 @@ const Block = ({
           </div>
         </div>
         <Form>
-          <Grid>
-            <Grid.Row columns={2}>
-              <Grid.Column>
-                <BlockContent {...form} label="Male Content" />
-              </Grid.Column>
-              <Grid.Column>
-                <BlockContent {...form} label="Female Content" />
-              </Grid.Column>
-            </Grid.Row>
+          <Grid stackable columns={2}>
+            <Grid.Column>
+              <BlockContent {...form} label="Male Content" />
+            </Grid.Column>
+            <Grid.Column>
+              <BlockContent {...form} label="Female Content" />
+            </Grid.Column>
           </Grid>
         </Form>
         {block.updatedAt && (
