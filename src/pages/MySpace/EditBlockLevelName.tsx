@@ -51,7 +51,7 @@ const EditBlockLevelName = ({ block, level, setLevel }: EditBlockNameProps) => {
         trigger={
           <Button
             circular
-            color="blue"
+            color="yellow"
             icon="edit"
             onClick={() => setOpenPopup(true)}
             disabled={isUpdateBlockLoading}

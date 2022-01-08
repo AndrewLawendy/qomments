@@ -58,7 +58,8 @@ const BlockContent = ({
       >
         <Icon name="clock outline" />
         <span>{readingStats.text}</span> <Icon name="file word outline" />
-        <span>{readingStats.words} word(s)</span>
+        <span>{readingStats.words} word(s)</span> <Icon name="i cursor" />
+        <span>{values[label].length} characters</span>
       </div>
 
       {suggestions.length > 0 && (

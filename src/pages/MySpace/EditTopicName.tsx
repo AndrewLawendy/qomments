@@ -36,7 +36,7 @@ const EditTopicName = ({ topic }: EditTopicNameProps) => {
         trigger={
           <Button
             circular
-            color="blue"
+            color="yellow"
             icon="edit"
             onClick={() => setOpenPopup(true)}
             disabled={isUpdateTopicLoading}

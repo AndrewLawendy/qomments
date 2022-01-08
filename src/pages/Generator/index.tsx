@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import copy from "copy-to-clipboard";
 import { toast } from "react-toastify";
+import readingTime, { ReadTimeResults } from "reading-time";
 import {
   Segment,
   Header,
@@ -20,7 +21,7 @@ import {
   DropResult,
   DraggableLocation,
 } from "react-beautiful-dnd";
-import { css } from "@emotion/css";
+import { css, keyframes } from "@emotion/css";
 
 import TopicDraggable from "./TopicDraggable";
 import DroppedDecorator from "./DroppedDecorator";
@@ -45,6 +46,23 @@ const genderOptions = [
   },
 ];
 
+const bounce = keyframes`
+  from, 20%, 53%, 80%, to {
+    transform: translate3d(0,0,0);
+  }
+
+  40%, 43% {
+    transform: translate3d(0, -10px, 0);
+  }
+
+  70% {
+    transform: translate3d(0, -7px, 0);
+  }
+
+  90% {
+    transform: translate3d(0,-4px,0);
+  }
+`;
 let isListeningToBeforeUnload = false;
 
 function isTopic(
@@ -60,7 +78,7 @@ function onBeforeUnload(e: BeforeUnloadEvent) {
 
 const Generator = () => {
   const {
-    values,
+    values: formValues,
     errors,
     onChange,
     onBlur,
@@ -71,6 +89,7 @@ const Generator = () => {
   } = useRequiredForm({
     Name: "",
     Gender: "",
+    "Max Characters": "1000",
   });
   const [isCopyButtonClick, setCopyButtonClick] = useState(false);
   const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection();
@@ -88,7 +107,12 @@ const Generator = () => {
     Array<GeneratorDecorator | GeneratorTopic>
   >([]);
   const hasDroppedTopics = droppedTopics.length > 0;
-  const [hasContent, setHasContent] = useState(false);
+
+  const [topicsContent, setTopicsContent] = useState("");
+  const hasContent = topicsContent.length > 0;
+
+  const [contentReadingTime, setContentReadingTime] =
+    useState<ReadTimeResults>();
 
   useEffect(() => {
     const decorators: GeneratorDecorator[] = [];
@@ -138,10 +162,15 @@ const Generator = () => {
 
   useEffect(() => {
     const topicContentElements = document.querySelectorAll(".topic-content");
+    const topicsContent = [...topicContentElements]
+      .map((element: Element) => element.textContent)
+      .join(" ");
     const hasTopicContentElements = topicContentElements.length > 0;
+    const readingTimeResult = readingTime(topicsContent);
 
     handleBeforeUnload(hasTopicContentElements);
-    setHasContent(hasTopicContentElements);
+    setTopicsContent(topicsContent);
+    setContentReadingTime(readingTimeResult);
   }, [droppedTopics]);
 
   useEffect(
@@ -233,11 +262,6 @@ const Generator = () => {
     handleSubmit(() => {
       if (!hasDroppedTopics || !hasContent) return;
 
-      const topicContentElements = document.querySelectorAll(".topic-content");
-      const topicsContent = [...topicContentElements]
-        .map((element: Element) => element.textContent)
-        .join(" ");
-
       copy(topicsContent);
       toast.success("qomment is copied successfully");
     });
@@ -261,7 +285,7 @@ const Generator = () => {
             <Form.Input
               label="Name"
               name="Name"
-              value={values.Name}
+              value={formValues.Name}
               error={errors.Name}
               onChange={onChange}
               onBlur={onBlur}
@@ -270,12 +294,22 @@ const Generator = () => {
               options={genderOptions}
               label="Gender"
               name="Gender"
-              value={values.Gender}
+              value={formValues.Gender}
               error={errors.Gender}
               onChange={(_, { value }) =>
                 setFieldValue("Gender", value as string)
               }
               onBlur={() => setFieldTouched("Gender")}
+            />
+            <Form.Input
+              type="number"
+              min="1"
+              label="Max Characters"
+              name="Max Characters"
+              value={formValues["Max Characters"]}
+              error={errors["Max Characters"]}
+              onChange={onChange}
+              onBlur={onBlur}
             />
           </Form.Group>
         </Form>
@@ -467,9 +501,9 @@ const Generator = () => {
                           onTopicLevelChange={onTopicLevelChange}
                           onTopicDelete={() => onTopicDelete(index)}
                           index={index}
-                          name={values.Name}
+                          name={formValues.Name}
                           gender={
-                            values.Gender as "maleContent" | "femaleContent"
+                            formValues.Gender as "maleContent" | "femaleContent"
                           }
                         />
                       );
@@ -480,7 +514,7 @@ const Generator = () => {
                           decorator={droppedTopic}
                           onDecoratorDelete={() => onDecoratorDelete(index)}
                           index={index}
-                          name={values.Name}
+                          name={formValues.Name}
                         />
                       );
                     }
@@ -527,14 +561,47 @@ const Generator = () => {
             </Message>
           )}
 
+          {contentReadingTime && (
+            <div
+              className={css`
+                color: #757575;
+                margin-bottom: 14px;
+              `}
+            >
+              <Icon name="clock outline" />
+              <span>{contentReadingTime.text}</span>{" "}
+              <Icon name="file word outline" />
+              <span>{contentReadingTime.words} word(s)</span>{" "}
+              <span
+                className={css({
+                  display: "inline-block",
+                  color:
+                    topicsContent.length > Number(formValues["Max Characters"])
+                      ? "#db2828"
+                      : "inherit",
+                  animation:
+                    topicsContent.length > Number(formValues["Max Characters"])
+                      ? `${bounce} 1s ease`
+                      : undefined,
+
+                  transition: "all .3s",
+                })}
+              >
+                <Icon name="i cursor" />
+                <span>{topicsContent.length} characters</span>
+              </span>
+            </div>
+          )}
+
           <Button
-            color="yellow"
             className={css`
               display: block !important;
               margin: 0 auto !important;
             `}
+            color="yellow"
             onClick={copyContent}
           >
+            <Icon name="copy outline" />
             Copy qomment
           </Button>
         </Segment>
