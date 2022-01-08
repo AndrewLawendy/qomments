@@ -25,7 +25,7 @@ const EditContent = ({
   }, [content]);
 
   function copyContent() {
-    copy(editableContent);
+    copy(editableContent.trim());
     toast.success("qomment is copied successfully");
     setModalOpen(false);
     setEditableContent(content);
@@ -84,7 +84,7 @@ const EditContent = ({
               })}
             >
               <Icon name="i cursor" />
-              <span>{editableContent.length} characters</span>
+              <span>{editableContent.trim().length} characters</span>
             </span>
           </div>
         </Modal.Content>
