@@ -240,15 +240,19 @@ const Generator = () => {
     setTopics([...topics]);
   }
 
-  function copyContent() {
+  function handleActionButtonClick(onFormValid: () => void) {
     if (!isCopyButtonClick) setCopyButtonClick(true);
 
     handleSubmit(() => {
       if (!hasDroppedTopics || !hasContent) return;
 
-      copy(topicsContent);
-      toast.success("qomment is copied successfully");
+      onFormValid();
     });
+  }
+
+  function copyContent() {
+    copy(topicsContent);
+    toast.success("qomment is copied successfully");
   }
 
   return (
@@ -581,7 +585,10 @@ const Generator = () => {
               text-align: center;
             `}
           >
-            <Button color="yellow" onClick={copyContent}>
+            <Button
+              color="yellow"
+              onClick={() => handleActionButtonClick(copyContent)}
+            >
               <Icon name="copy outline" />
               Copy qomment
             </Button>
@@ -589,6 +596,7 @@ const Generator = () => {
             <EditContent
               content={topicsContent}
               maxCharacters={Number(formValues["Max Characters"])}
+              handleActionButtonClick={handleActionButtonClick}
             />
           </div>
         </Segment>

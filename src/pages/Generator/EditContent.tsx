@@ -8,9 +8,14 @@ import { Button, Modal, Form, Icon } from "semantic-ui-react";
 type EditContentProps = {
   content: string;
   maxCharacters: number;
+  handleActionButtonClick: (onFormValid: () => void) => void;
 };
 
-const EditContent = ({ content, maxCharacters }: EditContentProps) => {
+const EditContent = ({
+  content,
+  maxCharacters,
+  handleActionButtonClick,
+}: EditContentProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editableContent, setEditableContent] = useState(content);
   const contentReadingTime = readingTime(editableContent);
@@ -32,7 +37,7 @@ const EditContent = ({ content, maxCharacters }: EditContentProps) => {
         icon="pencil alternate"
         content="Edit before copy"
         color="blue"
-        onClick={() => setModalOpen(true)}
+        onClick={() => handleActionButtonClick(() => setModalOpen(true))}
       />
 
       <Modal
