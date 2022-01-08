@@ -101,8 +101,8 @@ const Block = ({
                           "Female Content": femaleContent,
                         }) =>
                           updateBlock(block.id as string, {
-                            maleContent,
-                            femaleContent,
+                            maleContent: maleContent.trim(),
+                            femaleContent: femaleContent.trim(),
                           }).then(() =>
                             toast.success(`${level} is updated successfully`)
                           )

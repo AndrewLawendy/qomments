@@ -21,11 +21,12 @@ import {
   DropResult,
   DraggableLocation,
 } from "react-beautiful-dnd";
-import { css, keyframes } from "@emotion/css";
+import { css } from "@emotion/css";
 
 import TopicDraggable from "./TopicDraggable";
 import DroppedDecorator from "./DroppedDecorator";
 import DroppedTopic from "./DroppedTopic";
+import EditContent from "./EditContent";
 
 import useRequiredForm from "~hooks/useRequiredForm";
 import { useTopicsCollection } from "~/resources/useTopicsCollection";
@@ -46,23 +47,6 @@ const genderOptions = [
   },
 ];
 
-const bounce = keyframes`
-  from, 20%, 53%, 80%, to {
-    transform: translate3d(0,0,0);
-  }
-
-  40%, 43% {
-    transform: translate3d(0, -10px, 0);
-  }
-
-  70% {
-    transform: translate3d(0, -7px, 0);
-  }
-
-  90% {
-    transform: translate3d(0,-4px,0);
-  }
-`;
 let isListeningToBeforeUnload = false;
 
 function isTopic(
@@ -171,7 +155,7 @@ const Generator = () => {
     handleBeforeUnload(hasTopicContentElements);
     setTopicsContent(topicsContent);
     setContentReadingTime(readingTimeResult);
-  }, [droppedTopics]);
+  }, [droppedTopics, formValues]);
 
   useEffect(
     () => () => window.removeEventListener("beforeunload", onBeforeUnload),
@@ -581,7 +565,7 @@ const Generator = () => {
                       : "inherit",
                   animation:
                     topicsContent.length > Number(formValues["Max Characters"])
-                      ? `${bounce} 1s ease`
+                      ? "bounce 1s ease"
                       : undefined,
 
                   transition: "all .3s",
@@ -592,18 +576,21 @@ const Generator = () => {
               </span>
             </div>
           )}
-
-          <Button
+          <div
             className={css`
-              display: block !important;
-              margin: 0 auto !important;
+              text-align: center;
             `}
-            color="yellow"
-            onClick={copyContent}
           >
-            <Icon name="copy outline" />
-            Copy qomment
-          </Button>
+            <Button color="yellow" onClick={copyContent}>
+              <Icon name="copy outline" />
+              Copy qomment
+            </Button>
+
+            <EditContent
+              content={topicsContent}
+              maxCharacters={Number(formValues["Max Characters"])}
+            />
+          </div>
         </Segment>
         {/* End of Dropped Items */}
       </DragDropContext>

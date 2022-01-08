@@ -190,11 +190,11 @@ const Topic = ({ topic }: TopicProps) => {
             color="green"
             onClick={() => {
               if (topic?.id) {
-                setDeleteConfirmOpen(false);
-                deleteTopic(topic.id).then(() =>
-                  toast.success(`Topic ${topic.name} is updated successfully`)
-                );
                 blocks.forEach((block) => block.id && deleteBlock(block.id));
+                deleteTopic(topic.id).then(() =>
+                  toast.success(`Topic ${topic.name} is deleted successfully`)
+                );
+                setDeleteConfirmOpen(false);
                 setLocation("/introduction");
               }
             }}

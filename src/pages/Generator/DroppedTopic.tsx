@@ -186,7 +186,7 @@ const DroppedTopic = ({
                 name ? (
                   blockValues.blocks[values.Level][
                     gender || "maleContent"
-                  ].replaceAll("*", name)
+                  ].replaceAll("*", name.trim())
                 ) : (
                   blockValues.blocks[values.Level][gender || "maleContent"]
                 )

@@ -25,7 +25,7 @@ const BlockContent = ({
   onBlur,
   label,
 }: BlockContentProps) => {
-  const readingStats = readingTime(values[label]);
+  const readingStats = readingTime(values[label].trim());
   const debouncedValue = useDebounce(values[label]);
   const [suggestions, setSuggestions] = useState<Problem[]>([]);
 
@@ -59,7 +59,7 @@ const BlockContent = ({
         <Icon name="clock outline" />
         <span>{readingStats.text}</span> <Icon name="file word outline" />
         <span>{readingStats.words} word(s)</span> <Icon name="i cursor" />
-        <span>{values[label].length} characters</span>
+        <span>{values[label].trim().length} characters</span>
       </div>
 
       {suggestions.length > 0 && (
