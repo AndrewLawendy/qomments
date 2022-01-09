@@ -11,11 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "@emotion/css": "^11.7.1",
-    "components": "^0.1.0",
     "copy-to-clipboard": "^3.3.1",
     "firebase": "^9.6.1",
-    "hooks": "^0.3.2",
-    "pages": "^0.0.16",
     "react": "^17.0.1",
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.1",
