@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import copy from "copy-to-clipboard";
 import { toast } from "react-toastify";
+import readingTime, { ReadTimeResults } from "reading-time";
 import {
   Segment,
   Header,
@@ -25,6 +26,7 @@ import { css } from "@emotion/css";
 import TopicDraggable from "./TopicDraggable";
 import DroppedDecorator from "./DroppedDecorator";
 import DroppedTopic from "./DroppedTopic";
+import EditContent from "./EditContent";
 
 import useRequiredForm from "~hooks/useRequiredForm";
 import { useTopicsCollection } from "~/resources/useTopicsCollection";
@@ -32,7 +34,7 @@ import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
 import { useBlocksCollection } from "~resources/useBlocksCollection";
 
 import { Block } from "~/types";
-import { GeneratorDecorator, GeneratorTopic } from "./types";
+import { GeneratorDecorator, GeneratorTopic, BlocksValues } from "./types";
 
 const genderOptions = [
   {
@@ -45,15 +47,22 @@ const genderOptions = [
   },
 ];
 
+let isListeningToBeforeUnload = false;
+
 function isTopic(
   droppedTopic: GeneratorDecorator | GeneratorTopic
 ): droppedTopic is GeneratorTopic {
   return (droppedTopic as GeneratorTopic).name !== undefined;
 }
 
+function onBeforeUnload(e: BeforeUnloadEvent) {
+  e.preventDefault();
+  e.returnValue = "";
+}
+
 const Generator = () => {
   const {
-    values,
+    values: formValues,
     errors,
     onChange,
     onBlur,
@@ -64,6 +73,7 @@ const Generator = () => {
   } = useRequiredForm({
     Name: "",
     Gender: "",
+    "Max Characters": "1000",
   });
   const [isCopyButtonClick, setCopyButtonClick] = useState(false);
   const [decoratorsRef, isDecoratorsLoading] = useDecoratorsCollection();
@@ -75,13 +85,18 @@ const Generator = () => {
   const [hasTopics, setHasTopics] = useState(false);
 
   const [blocksRef, isBlocksLoading] = useBlocksCollection();
-  const [blocks, setBlocks] = useState<{ [id: string]: Block[] }>({});
+  const [blocks, setBlocks] = useState<BlocksValues>({});
 
   const [droppedTopics, setDroppedTopics] = useState<
     Array<GeneratorDecorator | GeneratorTopic>
   >([]);
   const hasDroppedTopics = droppedTopics.length > 0;
-  const [hasContent, setHasContent] = useState(false);
+
+  const [topicsContent, setTopicsContent] = useState("");
+  const hasContent = topicsContent.length > 0;
+
+  const [contentReadingTime, setContentReadingTime] =
+    useState<ReadTimeResults>();
 
   useEffect(() => {
     const decorators: GeneratorDecorator[] = [];
@@ -110,15 +125,20 @@ const Generator = () => {
   }, [topicsRef]);
 
   useEffect(() => {
-    const blocksValues: { [id: string]: Block[] } = {};
+    const blocksValues: BlocksValues = {};
     blocksRef?.forEach((document) => {
       const block: Block = {
         id: document.id,
         ...(document.data() as Omit<Block, "id">),
       };
 
-      if (!blocksValues[block.topic]) blocksValues[block.topic] = [];
-      blocksValues[block.topic].push(block);
+      if (!blocksValues[block.topic]) {
+        blocksValues[block.topic] = { levels: [], blocks: {}, length: 0 };
+      }
+
+      blocksValues[block.topic].levels.push(block.level);
+      blocksValues[block.topic].blocks[block.level] = block;
+      blocksValues[block.topic].length++;
     });
 
     setBlocks(blocksValues);
@@ -126,8 +146,35 @@ const Generator = () => {
 
   useEffect(() => {
     const topicContentElements = document.querySelectorAll(".topic-content");
-    setHasContent(topicContentElements.length > 0);
-  }, [droppedTopics]);
+    const topicsContent = [...topicContentElements]
+      .map((element: Element) => element.textContent)
+      .join(" ");
+    const hasTopicContentElements = topicContentElements.length > 0;
+    const readingTimeResult = readingTime(topicsContent);
+
+    handleBeforeUnload(hasTopicContentElements);
+    setTopicsContent(topicsContent);
+    setContentReadingTime(readingTimeResult);
+  }, [droppedTopics, formValues]);
+
+  useEffect(
+    () => () => window.removeEventListener("beforeunload", onBeforeUnload),
+    []
+  );
+
+  function handleBeforeUnload(hasTopicContentElements: boolean) {
+    if (hasTopicContentElements) {
+      if (!isListeningToBeforeUnload) {
+        window.addEventListener("beforeunload", onBeforeUnload);
+        isListeningToBeforeUnload = true;
+      }
+    } else {
+      if (isListeningToBeforeUnload) {
+        window.removeEventListener("beforeunload", onBeforeUnload);
+        isListeningToBeforeUnload = false;
+      }
+    }
+  }
 
   function handleDropped({ source, destination }: DropResult) {
     let droppedItem: GeneratorDecorator | GeneratorTopic;
@@ -166,9 +213,9 @@ const Generator = () => {
     }
   }
 
-  function onTopicScoreChange(index: number, score: number) {
+  function onTopicLevelChange(index: number, level: string) {
     const topic = droppedTopics[index];
-    (topic as GeneratorTopic).score = score;
+    (topic as GeneratorTopic).level = level;
 
     setDroppedTopics([...droppedTopics]);
   }
@@ -193,20 +240,19 @@ const Generator = () => {
     setTopics([...topics]);
   }
 
-  function copyContent() {
+  function handleActionButtonClick(onFormValid: () => void) {
     if (!isCopyButtonClick) setCopyButtonClick(true);
 
     handleSubmit(() => {
       if (!hasDroppedTopics || !hasContent) return;
 
-      const topicContentElements = document.querySelectorAll(".topic-content");
-      const topicsContent = [...topicContentElements]
-        .map((element: Element) => element.textContent)
-        .join("\n");
-
-      copy(topicsContent);
-      toast.success("qomment is copied successfully");
+      onFormValid();
     });
+  }
+
+  function copyContent() {
+    copy(topicsContent);
+    toast.success("qomment is copied successfully");
   }
 
   return (
@@ -227,7 +273,7 @@ const Generator = () => {
             <Form.Input
               label="Name"
               name="Name"
-              value={values.Name}
+              value={formValues.Name}
               error={errors.Name}
               onChange={onChange}
               onBlur={onBlur}
@@ -236,12 +282,22 @@ const Generator = () => {
               options={genderOptions}
               label="Gender"
               name="Gender"
-              value={values.Gender}
+              value={formValues.Gender}
               error={errors.Gender}
               onChange={(_, { value }) =>
                 setFieldValue("Gender", value as string)
               }
               onBlur={() => setFieldTouched("Gender")}
+            />
+            <Form.Input
+              type="number"
+              min="1"
+              label="Max Characters"
+              name="Max Characters"
+              value={formValues["Max Characters"]}
+              error={errors["Max Characters"]}
+              onChange={onChange}
+              onBlur={onBlur}
             />
           </Form.Group>
         </Form>
@@ -423,13 +479,19 @@ const Generator = () => {
                         <DroppedTopic
                           key={droppedTopic.id}
                           topic={droppedTopic}
-                          blocks={blocks[droppedTopic.id] || []}
-                          onTopicScoreChange={onTopicScoreChange}
+                          blockValues={
+                            blocks[droppedTopic.id] || {
+                              levels: [],
+                              blocks: {},
+                              length: 0,
+                            }
+                          }
+                          onTopicLevelChange={onTopicLevelChange}
                           onTopicDelete={() => onTopicDelete(index)}
                           index={index}
-                          name={values.Name}
+                          name={formValues.Name}
                           gender={
-                            values.Gender as "maleContent" | "femaleContent"
+                            formValues.Gender as "maleContent" | "femaleContent"
                           }
                         />
                       );
@@ -440,7 +502,7 @@ const Generator = () => {
                           decorator={droppedTopic}
                           onDecoratorDelete={() => onDecoratorDelete(index)}
                           index={index}
-                          name={values.Name}
+                          name={formValues.Name}
                         />
                       );
                     }
@@ -487,16 +549,56 @@ const Generator = () => {
             </Message>
           )}
 
-          <Button
-            color="yellow"
+          {contentReadingTime && (
+            <div
+              className={css`
+                color: #757575;
+                margin-bottom: 14px;
+              `}
+            >
+              <Icon name="clock outline" />
+              <span>{contentReadingTime.text}</span>{" "}
+              <Icon name="file word outline" />
+              <span>{contentReadingTime.words} word(s)</span>{" "}
+              <span
+                className={css({
+                  display: "inline-block",
+                  color:
+                    topicsContent.length > Number(formValues["Max Characters"])
+                      ? "#db2828"
+                      : "inherit",
+                  animation:
+                    topicsContent.length > Number(formValues["Max Characters"])
+                      ? "bounce 1s ease"
+                      : undefined,
+
+                  transition: "all .3s",
+                })}
+              >
+                <Icon name="i cursor" />
+                <span>{topicsContent.length} characters</span>
+              </span>
+            </div>
+          )}
+          <div
             className={css`
-              display: block !important;
-              margin: 0 auto !important;
+              text-align: center;
             `}
-            onClick={copyContent}
           >
-            Copy qomment
-          </Button>
+            <Button
+              color="yellow"
+              onClick={() => handleActionButtonClick(copyContent)}
+            >
+              <Icon name="copy outline" />
+              Copy qomment
+            </Button>
+
+            <EditContent
+              content={topicsContent}
+              maxCharacters={Number(formValues["Max Characters"])}
+              handleActionButtonClick={handleActionButtonClick}
+            />
+          </div>
         </Segment>
         {/* End of Dropped Items */}
       </DragDropContext>

@@ -2,44 +2,59 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Popup, Button, Modal, Form } from "semantic-ui-react";
 
-import { Topic } from "~/types";
-
 import { useUpdateDocument } from "~/hooks/useCrud";
 import useRequiredForm, { Values } from "~hooks/useRequiredForm";
 
-type EditTopicNameProps = {
-  topic: Topic;
+import { Block } from "~types";
+import { TemporaryBlock } from "./types";
+
+type EditBlockNameProps = {
+  block: Block | TemporaryBlock;
+  level: string;
+  setLevel: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const EditTopicName = ({ topic }: EditTopicNameProps) => {
+const EditBlockLevelName = ({ block, level, setLevel }: EditBlockNameProps) => {
   const [openPopup, setOpenPopup] = useState(false);
-  const [updateTopic, isUpdateTopicLoading] =
-    useUpdateDocument<Topic>("topics");
-  const { values, errors, onChange, onBlur, destroyForm, handleSubmit } =
-    useRequiredForm({
-      "Topic Name": topic.name,
-    });
+  const {
+    values,
+    errors,
+    onChange,
+    onBlur,
+    handleSubmit,
+    destroyForm,
+    reInitializeForm,
+  } = useRequiredForm({
+    "Level Name": level,
+  });
 
-  function submitTopicName({ "Topic Name": topicName }: Values) {
-    updateTopic(topic.id, { name: topicName }).then(() =>
-      toast.success(
-        `Topic ${topic.name} is updated successfully to ${topicName}`
-      )
-    );
+  const [updateBlock, isUpdateBlockLoading] =
+    useUpdateDocument<Block>("blocks");
+
+  function updateBlockLevel({ "Level Name": level }: Values) {
     setOpenPopup(false);
+    reInitializeForm({ "Level Name": level });
+
+    if (block.id) {
+      updateBlock(block.id, { level }).then(() => {
+        toast.success(`Level Name is updated successfully to ${level}`);
+      });
+    } else {
+      setLevel(level);
+    }
   }
 
   return (
     <>
       <Popup
-        content={`Edit Topic Name`}
+        content="Edit Block Level Name"
         trigger={
           <Button
             circular
             color="yellow"
             icon="edit"
             onClick={() => setOpenPopup(true)}
-            disabled={isUpdateTopicLoading}
+            disabled={isUpdateBlockLoading}
           />
         }
       />
@@ -53,14 +68,14 @@ const EditTopicName = ({ topic }: EditTopicNameProps) => {
         }}
         size="tiny"
       >
-        <Modal.Header>Edit Topic Name</Modal.Header>
+        <Modal.Header>Choose block level</Modal.Header>
         <Modal.Content>
           <Form>
             <Form.Input
-              label="Topic Name"
-              name="Topic Name"
-              value={values["Topic Name"]}
-              error={errors["Topic Name"]}
+              label="Level Name"
+              name="Level Name"
+              value={values["Level Name"]}
+              error={errors["Level Name"]}
               onChange={onChange}
               onBlur={onBlur}
               autoFocus={true}
@@ -78,7 +93,7 @@ const EditTopicName = ({ topic }: EditTopicNameProps) => {
             Cancel
           </Button>
 
-          <Button positive onClick={() => handleSubmit(submitTopicName)}>
+          <Button positive onClick={() => handleSubmit(updateBlockLevel)}>
             Submit
           </Button>
         </Modal.Actions>
@@ -87,4 +102,4 @@ const EditTopicName = ({ topic }: EditTopicNameProps) => {
   );
 };
 
-export default EditTopicName;
+export default EditBlockLevelName;

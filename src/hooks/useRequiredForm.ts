@@ -4,7 +4,7 @@ export type Values = {
   [key: string]: string;
 };
 
-type Errors = {
+export type Errors = {
   [key: string]: Error | null;
 };
 
@@ -16,6 +16,7 @@ type Error = {
 type Touched = { [key: string]: boolean };
 
 const useRequiredForm = (initialFormValue: Values) => {
+  const [initialValues, setInitialValues] = useState(initialFormValue);
   const [values, setValues] = useState(initialFormValue);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Touched>({});
@@ -32,11 +33,15 @@ const useRequiredForm = (initialFormValue: Values) => {
   }
 
   function onBlur({ target: { name } }: FocusEvent<HTMLInputElement>) {
-    setTouched({ ...touched, [name]: true });
+    setFieldTouched(name);
+  }
+
+  function reInitializeForm(values: Values) {
+    setInitialValues(values);
   }
 
   function destroyForm() {
-    setValues(initialFormValue);
+    setValues(initialValues);
     setTouched({});
     setErrors({});
   }
@@ -53,7 +58,9 @@ const useRequiredForm = (initialFormValue: Values) => {
   }
 
   function setFieldTouched(name: string) {
-    setTouched({ ...touched, [name]: true });
+    if (!touched[name]) {
+      setTouched({ ...touched, [name]: true });
+    }
   }
 
   function touchForm() {
@@ -93,6 +100,7 @@ const useRequiredForm = (initialFormValue: Values) => {
     setFieldValue,
     setFieldTouched,
     destroyForm,
+    reInitializeForm,
     isValid,
     handleSubmit,
   };

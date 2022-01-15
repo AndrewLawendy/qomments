@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import {
   Segment,
@@ -20,9 +20,13 @@ import {
 import useRequiredForm from "~hooks/useRequiredForm";
 
 import { Block } from "~/types";
+import { TemporaryBlock } from "./types";
+
+import EditBlockLevelName from "./EditBlockLevelName";
+import BlockContent from "./BlockContent";
 
 type BlockProps = {
-  block: Block | null;
+  block: Block | TemporaryBlock;
   topicId: string;
   index: number;
   isLast: boolean;
@@ -37,18 +41,24 @@ const Block = ({
   deleteLastBlock,
 }: BlockProps) => {
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [level, setLevel] = useState(block.level || `Level ${index + 1}`);
   const [addBlock, isAddBlockLoading] = useAddDocument<Block>("blocks");
   const [updateBlock, isUpdateBlockLoading] =
-    useUpdateDocument<Omit<Block, "topic" | "score">>("blocks");
+    useUpdateDocument<Block>("blocks");
   const [deleteBlock, isDeleteBlockLoading] = useDeleteDocument("blocks");
-  const { values, errors, onChange, onBlur, handleSubmit } = useRequiredForm({
-    "Male Content": block?.maleContent || "",
-    "Female Content": block?.femaleContent || "",
+  const { handleSubmit, ...form } = useRequiredForm({
+    "Male Content": block.maleContent || "",
+    "Female Content": block.femaleContent || "",
   });
-  const score = block?.score != undefined ? block.score : index + 1;
+
+  useEffect(() => {
+    if (block.level) {
+      setLevel(block.level);
+    }
+  }, [block.level]);
 
   function handleDelete() {
-    if (block?.id) {
+    if (block.id) {
       setDeleteConfirmOpen(true);
     } else {
       deleteLastBlock();
@@ -72,14 +82,14 @@ const Block = ({
               margin: 0 !important;
             `}
           >
-            Score {score}
+            {level}
           </Header>
 
           <div>
-            <Popup
-              content={block?.id ? `Update ${score}` : `Add ${score}`}
-              trigger={
-                block?.id ? (
+            {block.id ? (
+              <Popup
+                content={`Update ${level}`}
+                trigger={
                   <Button
                     circular
                     color="blue"
@@ -90,19 +100,22 @@ const Block = ({
                           "Male Content": maleContent,
                           "Female Content": femaleContent,
                         }) =>
-                          updateBlock(block.id, {
-                            maleContent,
-                            femaleContent,
+                          updateBlock(block.id as string, {
+                            maleContent: maleContent.trim(),
+                            femaleContent: femaleContent.trim(),
                           }).then(() =>
-                            toast.success(
-                              `Score ${score} is updated successfully`
-                            )
+                            toast.success(`${level} is updated successfully`)
                           )
                       )
                     }
                     disabled={isUpdateBlockLoading}
                   />
-                ) : (
+                }
+              />
+            ) : (
+              <Popup
+                content={`Add ${level}`}
+                trigger={
                   <Button
                     circular
                     color="green"
@@ -116,19 +129,22 @@ const Block = ({
                           addBlock({
                             maleContent,
                             femaleContent,
-                            score,
+                            level: level,
                             topic: topicId,
                           }).then(() =>
-                            toast.success(
-                              `Score ${score} is added successfully`
-                            )
+                            toast.success(`${level} is added successfully`)
                           )
                       )
                     }
                     disabled={isAddBlockLoading}
                   />
-                )
-              }
+                }
+              />
+            )}
+            <EditBlockLevelName
+              block={block}
+              level={level}
+              setLevel={setLevel}
             />
             {isLast && (
               <Popup
@@ -147,42 +163,16 @@ const Block = ({
           </div>
         </div>
         <Form>
-          <Grid>
-            <Grid.Row columns={2}>
-              <Grid.Column>
-                <Form.TextArea
-                  className={css`
-                    textarea {
-                      resize: none !important;
-                    }
-                  `}
-                  label="Male Content"
-                  name="Male Content"
-                  value={values["Male Content"]}
-                  error={errors["Male Content"]}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                />
-              </Grid.Column>
-              <Grid.Column>
-                <Form.TextArea
-                  className={css`
-                    textarea {
-                      resize: none !important;
-                    }
-                  `}
-                  label="Female Content"
-                  name="Female Content"
-                  value={values["Female Content"]}
-                  error={errors["Female Content"]}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                />
-              </Grid.Column>
-            </Grid.Row>
+          <Grid stackable columns={2}>
+            <Grid.Column>
+              <BlockContent {...form} label="Male Content" />
+            </Grid.Column>
+            <Grid.Column>
+              <BlockContent {...form} label="Female Content" />
+            </Grid.Column>
           </Grid>
         </Form>
-        {block?.updatedAt && (
+        {block.updatedAt && (
           <p
             className={css`
               margin-top: 1rem;
@@ -197,7 +187,7 @@ const Block = ({
       <Confirm
         dimmer="blurring"
         open={isDeleteConfirmOpen}
-        content={`Are you sure you want to delete Score ${score}?`}
+        content={`Are you sure you want to delete ${level}?`}
         cancelButton={
           <Button color="red" onClick={() => setDeleteConfirmOpen(false)}>
             No
@@ -207,9 +197,9 @@ const Block = ({
           <Button
             color="green"
             onClick={() =>
-              block?.id &&
+              block.id &&
               deleteBlock(block.id).then(() =>
-                toast.success(`Score ${score} is deleted successfully`)
+                toast.success(`${level} is deleted successfully`)
               )
             }
           >

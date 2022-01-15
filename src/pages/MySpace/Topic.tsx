@@ -22,6 +22,7 @@ import EditTopicName from "./EditTopicName";
 import Block from "./Block";
 
 import { Topic, Block as BlockType } from "~/types";
+import { TemporaryBlock } from "./types";
 
 type TopicProps = {
   topic: Topic;
@@ -33,10 +34,11 @@ const Topic = ({ topic }: TopicProps) => {
   const [blocksRef, isBlocksLoading] = useBlocksCollection(
     where("topic", "==", topic.id)
   );
-  const [blocks, setBlocks] = useState<Array<BlockType | null>>([]);
+  const [blocks, setBlocks] = useState<Array<BlockType | TemporaryBlock>>([]);
   const [deleteTopic, isDeleteTopicLoading] = useDeleteDocument("topics");
   const [deleteBlock] = useDeleteDocument("blocks");
   const [isAddTopicValidated, setAddTopicValidated] = useState(false);
+  const isTopicEmpty = blocks.length === 0;
 
   useEffect(() => {
     const blocksValues: BlockType[] = [];
@@ -53,9 +55,9 @@ const Topic = ({ topic }: TopicProps) => {
 
   function addNewBlock() {
     setAddTopicValidated(true);
-    const canAdd = isLastBlockConfirmed();
+    const canAdd = isTopicEmpty || isLastBlockConfirmed();
     if (canAdd) {
-      setBlocks([...blocks, null]);
+      setBlocks([...blocks, {}]);
       setAddTopicValidated(false);
     }
   }
@@ -67,7 +69,7 @@ const Topic = ({ topic }: TopicProps) => {
 
   function isLastBlockConfirmed() {
     const lastBlock = blocks[blocks.length - 1];
-    return lastBlock !== null;
+    return Boolean(lastBlock.id);
   }
 
   return (
@@ -147,7 +149,7 @@ const Topic = ({ topic }: TopicProps) => {
         />
       ))}
 
-      {isAddTopicValidated && !isLastBlockConfirmed() && (
+      {isAddTopicValidated && !isTopicEmpty && !isLastBlockConfirmed() && (
         <Message
           attached="bottom"
           warning
@@ -188,11 +190,11 @@ const Topic = ({ topic }: TopicProps) => {
             color="green"
             onClick={() => {
               if (topic?.id) {
-                setDeleteConfirmOpen(false);
+                blocks.forEach((block) => block.id && deleteBlock(block.id));
                 deleteTopic(topic.id).then(() =>
-                  toast.success(`Topic ${topic.name} is updated successfully`)
+                  toast.success(`Topic ${topic.name} is deleted successfully`)
                 );
-                blocks.forEach((block) => block && deleteBlock(block.id));
+                setDeleteConfirmOpen(false);
                 setLocation("/introduction");
               }
             }}

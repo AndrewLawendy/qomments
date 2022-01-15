@@ -39,7 +39,7 @@ const Decorator = ({ title, type }: DecoratorsProps) => {
   const [addDecorator, isAddDecoratorLoading] =
     useAddDocument<Decorator>("decorators");
   const [updateDecorator, isUpdateDecoratorLoading] =
-    useUpdateDocument<Omit<Decorator, "type">>("decorators");
+    useUpdateDocument<Decorator>("decorators");
   const [deleteDecorator, isDeleteDecoratorLoading] =
     useDeleteDocument("decorators");
 

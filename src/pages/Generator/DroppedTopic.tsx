@@ -8,7 +8,6 @@ import {
   Header,
   Popup,
   Button,
-  Dimmer,
   Placeholder,
   Modal,
   Form,
@@ -16,15 +15,14 @@ import {
 } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
-import { Block } from "~/types";
-import { GeneratorTopic } from "./types";
+import { GeneratorTopic, BlockValues } from "./types";
 
 import useRequiredForm from "~hooks/useRequiredForm";
 
 type DroppedTopicProps = {
   topic: GeneratorTopic;
-  blocks: Block[];
-  onTopicScoreChange: (index: number, score: number) => void;
+  blockValues: BlockValues;
+  onTopicLevelChange: (index: number, level: string) => void;
   onTopicDelete: () => void;
   index: number;
   name: string;
@@ -33,36 +31,29 @@ type DroppedTopicProps = {
 
 const DroppedTopic = ({
   topic,
-  blocks,
-  onTopicScoreChange,
+  blockValues,
+  onTopicLevelChange,
   onTopicDelete,
   index,
   name,
   gender,
 }: DroppedTopicProps) => {
-  const hasBlocks = blocks.length > 0;
-  const hasScore = topic.score != undefined;
-  const [openPopup, setOpenPopup] = useState(hasBlocks && !hasScore);
+  const hasBlocks = blockValues.length > 0;
+  const hasLevel = topic.level != undefined;
+  const [openPopup, setOpenPopup] = useState(hasBlocks && !hasLevel);
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { values, errors, setFieldValue, setFieldTouched, handleSubmit } =
     useRequiredForm({
-      Score: topic.score ? `${topic.score}` : "",
+      Level: topic.level ? `${topic.level}` : "",
     });
-  const scoreOptions = blocks.reduce<{ text: string; value: string }[]>(
-    (options, _, index) => {
-      options.push({
-        text: `Score ${index + 1}`,
-        value: `${index}`,
-      });
+  const levelOptions = blockValues.levels.map((level) => ({
+    text: level,
+    value: level,
+  }));
 
-      return options;
-    },
-    []
-  );
-
-  function submitScore() {
-    handleSubmit(({ Score }) => {
-      onTopicScoreChange(index, Number(Score));
+  function submitLevel() {
+    handleSubmit(({ Level }) => {
+      onTopicLevelChange(index, Level);
       setOpenPopup(false);
     });
   }
@@ -94,15 +85,14 @@ const DroppedTopic = ({
                 />
 
                 <Header size="tiny">
-                  {topic.name}
-                  {topic.score != undefined && `(Score ${topic.score + 1})`}
+                  {topic.name} {topic.level ? `(${topic.level})` : ""}
                 </Header>
               </div>
 
               <div>
-                {hasBlocks && hasScore && (
+                {hasBlocks && hasLevel && (
                   <Popup
-                    content={`Edit ${topic.name} Score`}
+                    content={`Edit ${topic.name} Level`}
                     trigger={
                       <Button
                         icon="edit"
@@ -127,26 +117,24 @@ const DroppedTopic = ({
 
             <Segment attached>
               {hasBlocks ? (
-                topic.score != undefined ? (
+                topic.level ? (
                   <span className="topic-content">
                     {name
-                      ? blocks[topic.score][gender || "maleContent"].replaceAll(
-                          "*",
-                          name
-                        )
-                      : blocks[topic.score][gender || "maleContent"]}
+                      ? blockValues.blocks[topic.level][
+                          gender || "maleContent"
+                        ].replaceAll("*", name)
+                      : blockValues.blocks[topic.level][
+                          gender || "maleContent"
+                        ]}
                   </span>
                 ) : (
-                  <>
-                    <Dimmer active inverted />
-                    <Placeholder fluid>
-                      <Placeholder.Line />
-                      <Placeholder.Line />
-                      <Placeholder.Line />
-                      <Placeholder.Line />
-                      <Placeholder.Line />
-                    </Placeholder>
-                  </>
+                  <Placeholder fluid>
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                  </Placeholder>
                 )
               ) : (
                 <div
@@ -169,31 +157,53 @@ const DroppedTopic = ({
       <Modal
         dimmer="blurring"
         open={openPopup}
-        closeOnDimmerClick={hasScore}
-        closeOnEscape={hasScore}
+        closeOnDimmerClick={hasLevel}
+        closeOnEscape={hasLevel}
         onClose={() => {
           setOpenPopup(false);
         }}
         size="tiny"
       >
-        <Modal.Header>Choose {topic.name} score</Modal.Header>
+        <Modal.Header>Choose {topic.name} level</Modal.Header>
         <Modal.Content>
           <Form>
             <Form.Select
-              options={scoreOptions}
-              label="Score"
-              name="Score"
-              value={values.Score}
-              error={errors.Score}
+              options={levelOptions}
+              label="Level"
+              name="Level"
+              value={values.Level}
+              error={errors.Level}
               onChange={(_, { value }) =>
-                setFieldValue("Score", value as string)
+                setFieldValue("Level", value as string)
               }
-              onBlur={() => setFieldTouched("Score")}
+              onBlur={() => setFieldTouched("Level")}
             />
+
+            <Header as="h4">Preview</Header>
+
+            <Segment>
+              {values.Level ? (
+                name ? (
+                  blockValues.blocks[values.Level][
+                    gender || "maleContent"
+                  ].replaceAll("*", name.trim())
+                ) : (
+                  blockValues.blocks[values.Level][gender || "maleContent"]
+                )
+              ) : (
+                <Placeholder fluid>
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                </Placeholder>
+              )}
+            </Segment>
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          {hasScore && (
+          {hasLevel && (
             <Button
               negative
               onClick={() => {
@@ -203,7 +213,7 @@ const DroppedTopic = ({
               Cancel
             </Button>
           )}
-          <Button positive onClick={submitScore}>
+          <Button positive onClick={submitLevel}>
             Submit
           </Button>
         </Modal.Actions>
