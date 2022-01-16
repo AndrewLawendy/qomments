@@ -3,7 +3,7 @@ import { css } from "@emotion/css";
 import Decorator from "./Decorator";
 import Topic from "./Topic";
 
-import { Topic as TopicType } from "~/types";
+import { Topic as TopicType } from "/src/types";
 
 type ActiveBlockProps = {
   activeBlock: string;

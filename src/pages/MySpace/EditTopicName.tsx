@@ -2,10 +2,10 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Popup, Button, Modal, Form } from "semantic-ui-react";
 
-import { Topic } from "~/types";
+import { Topic } from "/src/types";
 
-import { useUpdateDocument } from "~/hooks/useCrud";
-import useRequiredForm, { Values } from "~hooks/useRequiredForm";
+import { useUpdateDocument } from "/src/hooks/useCrud";
+import useRequiredForm, { Values } from "/src/hooks/useRequiredForm";
 
 type EditTopicNameProps = {
   topic: Topic;

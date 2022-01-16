@@ -4,7 +4,7 @@ import { css } from "@emotion/css";
 
 import AddTopic from "./AddTopic";
 
-import { Topic } from "~/types";
+import { Topic } from "/src/types";
 
 type AsideProps = {
   userName: string | null;

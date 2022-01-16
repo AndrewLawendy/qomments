@@ -17,7 +17,7 @@ import { css } from "@emotion/css";
 
 import { GeneratorTopic, BlockValues } from "./types";
 
-import useRequiredForm from "~hooks/useRequiredForm";
+import useRequiredForm from "/src/hooks/useRequiredForm";
 
 type DroppedTopicProps = {
   topic: GeneratorTopic;

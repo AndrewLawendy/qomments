@@ -1,4 +1,4 @@
-import { Decorator, Topic, Block } from "~/types";
+import { Decorator, Topic, Block } from "/src/types";
 
 export interface GeneratorTopic extends Topic {
   level?: string;

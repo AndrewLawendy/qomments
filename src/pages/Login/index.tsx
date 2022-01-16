@@ -16,12 +16,12 @@ import {
   Dimmer,
   Loader,
 } from "semantic-ui-react";
-import LoginImage from "~/assets/images/login.jpg";
-import Logo from "~/assets/logo.png";
+import LoginImage from "/src/assets/images/login.jpg";
+import Logo from "/src/assets/logo.png";
 
-import { useAuthContext } from "~contexts/AuthContext";
-import useAuth from "~/hooks/useAuth";
-import { auth } from "~/utils/firebase";
+import { useAuthContext } from "/src/contexts/AuthContext";
+import useAuth from "/src/hooks/useAuth";
+import { auth } from "/src/utils/firebase";
 
 const googleAuthProvider = new GoogleAuthProvider();
 const facebookAuthProvider = new FacebookAuthProvider();

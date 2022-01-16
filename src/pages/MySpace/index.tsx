@@ -9,9 +9,9 @@ import {
 } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
-import { useAuthContext } from "~contexts/AuthContext";
-import { useTopicsCollection } from "~/resources/useTopicsCollection";
-import { Topic as TopicType } from "~types";
+import { useAuthContext } from "/src/contexts/AuthContext";
+import { useTopicsCollection } from "/src/resources/useTopicsCollection";
+import { Topic as TopicType } from "/src/types";
 
 import Aside from "./Aside";
 import ActiveBlock from "./ActiveBlock";

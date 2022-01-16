@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { Header as SemanticHeader, Image } from "semantic-ui-react";
 
-import Logo from "~/assets/logo.png";
+import Logo from "/src/assets/logo.png";
 
 import NavLink from "./NavLink";
 import User from "./User";

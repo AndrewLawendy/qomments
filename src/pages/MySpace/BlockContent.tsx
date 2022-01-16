@@ -4,9 +4,9 @@ import readingTime from "reading-time";
 import { Form, Icon, Message, List } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
-import useDebounce from "~hooks/useDebounce";
+import useDebounce from "/src/hooks/useDebounce";
 
-import { Values, Errors } from "~hooks/useRequiredForm";
+import { Values, Errors } from "/src/hooks/useRequiredForm";
 
 type BlockContentProps = {
   values: Values;

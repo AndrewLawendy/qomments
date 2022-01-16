@@ -2,10 +2,10 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Popup, Button, Modal, Form } from "semantic-ui-react";
 
-import { useUpdateDocument } from "~/hooks/useCrud";
-import useRequiredForm, { Values } from "~hooks/useRequiredForm";
+import { useUpdateDocument } from "/src/hooks/useCrud";
+import useRequiredForm, { Values } from "/src/hooks/useRequiredForm";
 
-import { Block } from "~types";
+import { Block } from "/src/types";
 import { TemporaryBlock } from "./types";
 
 type EditBlockNameProps = {

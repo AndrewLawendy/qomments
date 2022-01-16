@@ -16,10 +16,10 @@ import {
   useAddDocument,
   useUpdateDocument,
   useDeleteDocument,
-} from "~/hooks/useCrud";
-import useRequiredForm from "~hooks/useRequiredForm";
+} from "/src/hooks/useCrud";
+import useRequiredForm from "/src/hooks/useRequiredForm";
 
-import { Block } from "~/types";
+import { Block } from "/src/types";
 import { TemporaryBlock } from "./types";
 
 import EditBlockLevelName from "./EditBlockLevelName";

@@ -1,9 +1,9 @@
 import { Route } from "wouter";
 import { css, injectGlobal } from "@emotion/css";
 
-import NestedRouter from "~components/NestedRouter";
-import Header from "~/components/Header";
-import Generator from "~/pages/Generator";
+import NestedRouter from "/src/components/NestedRouter";
+import Header from "/src/components/Header";
+import Generator from "/src/pages/Generator";
 import MySpace from "./MySpace";
 
 injectGlobal`

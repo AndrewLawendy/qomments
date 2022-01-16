@@ -4,9 +4,9 @@ import { toast } from "react-toastify";
 import { css } from "@emotion/css";
 import { Icon, Modal, Button, Form, Input } from "semantic-ui-react";
 
-import { Topic } from "~/types";
-import { useAddDocument } from "~/hooks/useCrud";
-import useRequiredForm from "~hooks/useRequiredForm";
+import { Topic } from "/src/types";
+import { useAddDocument } from "/src/hooks/useCrud";
+import useRequiredForm from "/src/hooks/useRequiredForm";
 
 const AddTopic = () => {
   const [, setLocation] = useLocation();

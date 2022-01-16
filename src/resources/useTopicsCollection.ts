@@ -1,8 +1,8 @@
 import { collection, query, where, QueryConstraint } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 
-import { useAuthContext } from "~contexts/AuthContext";
-import { db } from "~/utils/firebase";
+import { useAuthContext } from "/src/contexts/AuthContext";
+import { db } from "/src/utils/firebase";
 
 const useTopicsCollection = (...queryConstraints: QueryConstraint[]) => {
   const { authData } = useAuthContext();

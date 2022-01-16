@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { Header } from "semantic-ui-react";
 
-import NotFound from "~/assets/images/not-found.jpg";
+import NotFound from "/src/assets/images/not-found.jpg";
 
 const TopicNotFound = () => {
   return (

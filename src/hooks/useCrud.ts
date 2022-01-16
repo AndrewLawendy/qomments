@@ -10,9 +10,9 @@ import {
   DocumentData,
 } from "firebase/firestore";
 
-import { useAuthContext } from "~contexts/AuthContext";
+import { useAuthContext } from "/src/contexts/AuthContext";
 import { db } from "../utils/firebase";
-import { Common } from "~types";
+import { Common } from "/src/types";
 
 export const useAddDocument = <T>(
   collectionName: string

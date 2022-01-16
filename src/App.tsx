@@ -4,10 +4,10 @@ import { ToastContainer, Slide } from "react-toastify";
 import "semantic-ui-css/semantic.min.css";
 import "react-toastify/dist/ReactToastify.min.css";
 
-import AuthProvider from "~contexts/AuthContext";
-import AuthControlWrapper from "~/components/AuthControlWrapper";
-import Login from "~/pages/Login";
-import Main from "~/pages";
+import AuthProvider from "/src/contexts/AuthContext";
+import AuthControlWrapper from "/src/components/AuthControlWrapper";
+import Login from "/src/pages/Login";
+import Main from "/src/pages";
 
 const App = () => {
   return (

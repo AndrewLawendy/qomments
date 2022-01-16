@@ -20,10 +20,8 @@
     "inlineSources": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "rootDir": "src",
-    "baseUrl": "src",
     "paths": {
-      "~*": ["./*"]
+      "/*": ["./*"]
     },
     "typeRoots": ["./node_modules/@types"],
     "importHelpers": true,

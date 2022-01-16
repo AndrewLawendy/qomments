@@ -15,13 +15,13 @@ import {
 } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
-import { useDeleteDocument } from "~/hooks/useCrud";
-import { useBlocksCollection } from "~resources/useBlocksCollection";
+import { useDeleteDocument } from "/src/hooks/useCrud";
+import { useBlocksCollection } from "/src/resources/useBlocksCollection";
 
 import EditTopicName from "./EditTopicName";
 import Block from "./Block";
 
-import { Topic, Block as BlockType } from "~/types";
+import { Topic, Block as BlockType } from "/src/types";
 import { TemporaryBlock } from "./types";
 
 type TopicProps = {

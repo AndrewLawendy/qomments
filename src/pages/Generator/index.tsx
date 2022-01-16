@@ -28,12 +28,12 @@ import DroppedDecorator from "./DroppedDecorator";
 import DroppedTopic from "./DroppedTopic";
 import EditContent from "./EditContent";
 
-import useRequiredForm from "~hooks/useRequiredForm";
-import { useTopicsCollection } from "~/resources/useTopicsCollection";
-import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
-import { useBlocksCollection } from "~resources/useBlocksCollection";
+import useRequiredForm from "/src/hooks/useRequiredForm";
+import { useTopicsCollection } from "/src/resources/useTopicsCollection";
+import { useDecoratorsCollection } from "/src/resources/useDecoratorsCollection";
+import { useBlocksCollection } from "/src/resources/useBlocksCollection";
 
-import { Block } from "~/types";
+import { Block } from "/src/types";
 import { GeneratorDecorator, GeneratorTopic, BlocksValues } from "./types";
 
 const genderOptions = [

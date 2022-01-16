@@ -14,15 +14,15 @@ import {
 } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
-import { Decorator } from "~/types";
+import { Decorator } from "/src/types";
 
 import {
   useAddDocument,
   useUpdateDocument,
   useDeleteDocument,
-} from "~/hooks/useCrud";
-import { useDecoratorsCollection } from "~/resources/useDecoratorsCollection";
-import useRequiredForm from "~/hooks/useRequiredForm";
+} from "/src/hooks/useCrud";
+import { useDecoratorsCollection } from "/src/resources/useDecoratorsCollection";
+import useRequiredForm from "/src/hooks/useRequiredForm";
 
 type DecoratorsProps = {
   title: "Introduction" | "Closing";

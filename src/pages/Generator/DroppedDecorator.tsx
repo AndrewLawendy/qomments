@@ -11,8 +11,8 @@ import {
 } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
-import { Decorator } from "~/types";
-import { startCase } from "~/utils";
+import { Decorator } from "/src/types";
+import { startCase } from "/src/utils";
 
 type DroppedDecoratorProps = {
   decorator: Decorator;

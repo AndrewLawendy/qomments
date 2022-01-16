@@ -2,8 +2,8 @@ import { signOut } from "firebase/auth";
 import { css } from "@emotion/css";
 import { Dropdown, Image, Header } from "semantic-ui-react";
 
-import { useAuthContext } from "~contexts/AuthContext";
-import { auth } from "~/utils/firebase";
+import { useAuthContext } from "/src/contexts/AuthContext";
+import { auth } from "/src/utils/firebase";
 
 const User = () => {
   const { authData } = useAuthContext();

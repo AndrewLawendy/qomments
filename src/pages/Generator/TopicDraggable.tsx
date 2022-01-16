@@ -2,8 +2,8 @@ import { Draggable } from "react-beautiful-dnd";
 import { Label } from "semantic-ui-react";
 import { css } from "@emotion/css";
 
-import { Topic, Decorator } from "~types";
-import { startCase } from "~/utils";
+import { Topic, Decorator } from "/src/types";
+import { startCase } from "/src/utils";
 
 type TopicDragSourceProps = {
   topic: Topic | Decorator;

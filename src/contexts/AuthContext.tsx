@@ -1,6 +1,6 @@
 import { useState, createContext, useContext, FC, Dispatch } from "react";
 import { User } from "firebase/auth";
-import { getLocalUser } from "~/utils";
+import { getLocalUser } from "/src/utils";
 
 const user = getLocalUser();
 
